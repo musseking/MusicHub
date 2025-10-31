@@ -44,6 +44,9 @@ public class User {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @Column(name = "is_admin")
+    private Boolean isAdmin = false;
 
     // VEZE
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
@@ -67,7 +70,8 @@ public class User {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public List<Song> getSongs() { return songs; }
     public List<Album> getAlbums() { return albums; }
-
+    public Boolean getIsAdmin() { return isAdmin; }
+    
     // SETTER METODE
     public void setId(Long id) { this.id = id; }
     public void setUsername(String username) { this.username = username; }
@@ -83,6 +87,7 @@ public class User {
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     public void setSongs(List<Song> songs) { this.songs = songs; }
     public void setAlbums(List<Album> albums) { this.albums = albums; }
+    public void setIsAdmin(Boolean isAdmin) { this.isAdmin = isAdmin; }
 
     public String getFullName() {
         return firstName + " " + lastName;
