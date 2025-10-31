@@ -4,54 +4,74 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("=== CONFIGURING SECURITY - ALLOWING PUBLIC ACCESS ===");
-        
-        http
-            // 1. DOZVOLI SVE ZAHTEVE BEZ AUTENTIFIKACIJE (PRIVREMENO)
-            .authorizeHttpRequests(authz -> authz
-                .anyRequest().permitAll()  // DOZVOLI SVE BEZ LOGINA!
-            )
-            
-            // 2. ISKLJUČI FORM LOGIN PRIVREMENO
-            .formLogin(form -> form.disable())
-            
-            // 3. ISKLJUČI LOGOUT PRIVREMENO
-            .logout(logout -> logout.disable())
-            
-            // 4. ISKLJUČI CSRF
-            .csrf(csrf -> csrf.disable())
-            
-            // 5. ISKLJUČI HEADERS
-            .headers(headers -> headers.disable());
+    private final UserDetailsService userDetailsService;
 
-        return http.build();
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        System.out.println("=== CREATING DEMO USERS ===");
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("=== CONFIGURING SECURITY - PUBLIC ACCESS WITH LOGIN OPTION ===");
         
-        UserDetails user = User.builder()
-            .username("user")
-            .password(passwordEncoder.encode("password"))
-            .roles("USER")
-            .build();
+        http
+            .authorizeHttpRequests(authz -> authz
+                // JAVNE RUTE - svi mogu pristupiti (i nelogovani)
+                .requestMatchers(
+                    "/", "/index",  
+                    "/login", "/static/**",
+                    "/css/**", "/js/**", "/images/**",
+                    "/WEB-INF/jsp/**"  // dozvoli pristup JSP fajlovima
+                ).permitAll()
+                
+                // ZAŠTIĆENE RUTE - samo za logovane korisnike
+                .requestMatchers("/download/**", "/user/**").authenticated()
+                
+                // ADMIN RUTE - samo za admine
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                
+                // ARTIST RUTE - samo za artiste
+                .requestMatchers("/artist/**").hasRole("ARTIST")
+                
+                // SVE OSTALO - dozvoli svima (kao što želiš)
+                .anyRequest().permitAll()
+            )
+            
+            // OMOGUĆI FORM LOGIN (kao što želiš)
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)  // nakon logina, vrati na index
+                .failureUrl("/login?error=true")
+                .permitAll()
+            )
+            
+            // OMOGUĆI LOGOUT (opciono)
+            .logout(logout -> logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            )
+            
+            // KORISTI CUSTOM USER DETAILS SERVICE
+            .userDetailsService(userDetailsService)
+            
+            // CSRF može ostati disable za testiranje
+            .csrf(csrf -> csrf.disable());
 
-        return new InMemoryUserDetailsManager(user);
+        return http.build();
     }
 
     @Bean
