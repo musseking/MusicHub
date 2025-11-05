@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -23,14 +24,31 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-
-        // Proverite da li je korisnik aktivan
-        if (!Boolean.TRUE.equals(user.getIsActive())) {
-            throw new UsernameNotFoundException("User account is deactivated: " + username);
+        System.out.println("=== LOADING USER: " + username + " ===");
+        
+        // Prvo proveri sa običnim findByUsername
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        System.out.println("=== USER EXISTS (basic): " + userOpt.isPresent() + " ===");
+        
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            System.out.println("=== USER DETAILS ===");
+            System.out.println("=== Username: " + user.getUsername() + " ===");
+            System.out.println("=== Password: " + user.getPassword() + " ===");
+            System.out.println("=== IsActive: " + user.getIsActive() + " ===");
+            System.out.println("=== IsAdmin: " + user.getIsAdmin() + " ===");
+            System.out.println("=== IsArtist: " + user.getIsArtist() + " ===");
         }
+        
+        // Sada koristi findActiveUserByUsername
+        User user = userRepository.findActiveUserByUsername(username)
+                .orElseThrow(() -> {
+                    System.out.println("=== USER NOT FOUND OR INACTIVE VIA ACTIVE QUERY ===");
+                    return new UsernameNotFoundException("User not found or inactive: " + username);
+                });
 
+        System.out.println("=== USER SUCCESSFULLY LOADED VIA ACTIVE QUERY ===");
+        
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
@@ -41,19 +59,20 @@ public class CustomUserDetailsService implements UserDetailsService {
     private List<GrantedAuthority> getAuthorities(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         
-        // Svi korisnici dobijaju ROLE_USER
+        // SVI korisnici dobijaju ROLE_USER
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         
-        // Proverite da li je admin (username = "admin")
-        if ("admin".equals(user.getUsername())) {
+        // Ako je admin, dodaj ROLE_ADMIN
+        if (Boolean.TRUE.equals(user.getIsAdmin())) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
         
-        // Proverite da li je artist
+        // Ako je artist, dodaj ROLE_ARTIST  
         if (Boolean.TRUE.equals(user.getIsArtist())) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ARTIST"));
         }
         
+        System.out.println("=== FINAL AUTHORITIES: " + authorities + " ===");
         return authorities;
     }
 }

@@ -1,5 +1,6 @@
 package com.music.hub.security;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -77,5 +78,35 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    public CommandLineRunner testPassword() {
+        return args -> {
+            PasswordEncoder encoder = passwordEncoder();
+            String testPassword = "password123";
+            String encoded = encoder.encode(testPassword);
+            
+            System.out.println("=== PASSWORD ENCODING TEST ===");
+            System.out.println("Raw password: " + testPassword);
+            System.out.println("Encoded: " + encoded);
+            System.out.println("Matches stored: " + encoder.matches(testPassword, "$2a$10$8.UnVuG9HHgffUDAlk8qfOuW6.5d1uZ1V.8A9a7J.F.6zB0.7Q.6K"));
+            System.out.println("=== END TEST ===");
+        };
+    }
+    
+ // Dodaj ovo privremeno u SecurityConfig
+    @Bean
+    public CommandLineRunner resetPassword() {
+        return args -> {
+            PasswordEncoder encoder = passwordEncoder();
+            String newEncodedPassword = encoder.encode("password123");
+            System.out.println("=== NEW PASSWORD HASH ===");
+            System.out.println(newEncodedPassword);
+            System.out.println("=== UPDATE YOUR DATABASE WITH THIS ===");
+            
+            // Kopiraj ovaj hash i update-uj bazu:
+            // UPDATE users SET password = 'NEW_HASH_HERE' WHERE username = 'boris_brejcha';
+        };
     }
 }
