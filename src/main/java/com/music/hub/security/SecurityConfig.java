@@ -44,6 +44,12 @@ public class SecurityConfig {
                 // ARTIST RUTE - samo za artiste
                 .requestMatchers("/artist/**").hasRole("ARTIST")
                 
+                .requestMatchers("/admin/register-user").hasRole("ADMIN")
+                
+                .requestMatchers("/admin/users", "/admin/users/**").hasRole("ADMIN")
+                
+                .requestMatchers("/register", "/admin/register-artist").permitAll()
+                
                 // SVE OSTALO - dozvoli svima (kao što želiš)
                 .anyRequest().permitAll()
             )

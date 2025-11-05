@@ -54,6 +54,17 @@ public class User {
 
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
     private List<Album> albums = new ArrayList<>();
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     // GETTER METODE
     public Long getId() { return id; }

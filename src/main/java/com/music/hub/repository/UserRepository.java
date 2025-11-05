@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,4 +22,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
     
     boolean existsByEmail(String email);
+    
+    // Dohvati sve korisnike sortirane po tipu
+    @Query("SELECT u FROM User u ORDER BY u.isAdmin DESC, u.isArtist DESC, u.username ASC")
+    List<User> findAllUsersOrdered();
+    
+    // Dohvati sve artiste
+    @Query("SELECT u FROM User u WHERE u.isArtist = true ORDER BY u.username ASC")
+    List<User> findAllArtists();
+    
+    // Dohvati sve obične korisnike
+    @Query("SELECT u FROM User u WHERE u.isArtist = false AND u.isAdmin = false ORDER BY u.username ASC")
+    List<User> findAllRegularUsers();
 }

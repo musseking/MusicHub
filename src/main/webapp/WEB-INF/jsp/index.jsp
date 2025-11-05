@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
     <title>MusicHub - Share & Discover Music</title>
@@ -136,10 +137,37 @@
             border-color: #3d8b40;
         }
         
+        .show-users-btn {
+            color: white;
+            text-decoration: none;
+            background: #3742fa;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: bold;
+            border: 2px solid #2f36d4;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-right: 0.5rem;
+        }
+        
+        .show-users-btn:hover {
+            background: #2f36d4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-color: #252ba8;
+        }
+        
         .guest-buttons {
             display: flex;
             flex-direction: column;
             gap: 0.3rem;
+        }
+        
+        .admin-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
         
         .song-list {
@@ -212,11 +240,29 @@
                         ${loggedDisplayRole}
                     </div>
                 </div>
-                <form action="/logout" method="post" style="display: inline;">
-                    <button type="submit" class="logout-btn">Logout</button>
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                </form>
+                
+                <!-- DODATO: Poseban prikaz za ADMIN korisnike -->
+                <sec:authorize access="hasRole('ADMIN')">
+                    <div class="admin-buttons">
+                        <a href="/admin/users" class="show-users-btn">
+                            👥 Show All Users
+                        </a>
+                        <form action="/logout" method="post" style="display: inline; margin: 0;">
+                            <button type="submit" class="logout-btn">Logout</button>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        </form>
+                    </div>
+                </sec:authorize>
+                
+                <!-- PRIKAZ ZA OSTALE ULOGOVANE KORISNIKE (NON-ADMIN) -->
+                <sec:authorize access="!hasRole('ADMIN')">
+                    <form action="/logout" method="post" style="display: inline; margin: 0;">
+                        <button type="submit" class="logout-btn">Logout</button>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    </form>
+                </sec:authorize>
             </c:when>
+            
             <c:otherwise>
                 <!-- PRIKAZ ZA NELOGOVANE KORISNIKE -->
                 <div class="user-info-container">

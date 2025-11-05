@@ -26,10 +26,4 @@ public class LoginController {
         
         return "login"; 
     }
-
-    @GetMapping("/register")
-    public String register() {
-        System.out.println("=== REGISTER PAGE - PUBLIC ACCESS ===");
-        return "register";
-    }
 }
