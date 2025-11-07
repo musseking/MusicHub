@@ -170,57 +170,148 @@
             align-items: center;
         }
         
-        .song-list {
+        /* KOMPAKTNI GRID TILE LAYOUT */
+        .song-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 1rem;
             margin-top: 2rem;
         }
         
-        .song-item {
+        .song-tile {
             background: rgba(255,255,255,0.1);
-            padding: 1rem;
-            border-radius: 10px;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
+            border-radius: 12px;
+            overflow: hidden;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
         }
         
-        .song-item img {
-            border-radius: 8px;
-            width: 120px;
-            height: 120px;
+        .song-tile:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .song-image {
+            width: 100%;
+            height: 140px;
             object-fit: cover;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
-        .song-info {
+        .song-content {
+            padding: 0.8rem;
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .song-title {
-            font-size: 1.2rem;
+            font-size: 0.95rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
+            line-height: 1.2;
+            min-height: 2.4em;
         }
         
-        .download-info {
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            border-radius: 5px;
-            background: rgba(255,255,255,0.1);
+        .song-meta {
+            color: #ccc;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .song-meta-icon {
+            width: 14px;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        
+        .download-section {
+            margin-top: 0.6rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
         
         .preview-link {
             color: #4CAF50;
             text-decoration: none;
-            margin-right: 1rem;
+            margin-right: 0.8rem;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.8rem;
         }
         
         .preview-link:hover {
             text-decoration: underline;
         }
         
+        .download-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.8rem;
+        }
+        
+        .download-link:hover {
+            text-decoration: underline;
+        }
+        
+        .register-prompt {
+            color: #ccc;
+            font-style: italic;
+            font-size: 0.75rem;
+        }
+        
+        .download-unavailable {
+            color: #ff4757;
+            font-style: italic;
+            font-size: 0.75rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .song-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .song-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 0.6rem;
+            }
+            
+            .song-image {
+                height: 120px;
+            }
+            
+            .song-content {
+                padding: 0.6rem;
+            }
+            
+            .song-title {
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .song-meta {
+                font-size: 0.75rem;
+            }
+        }
+
         header h1 {
             color: #222;
             margin: 0;
@@ -283,39 +374,72 @@
 <main>
     <h2>Featured Tracks</h2>
     
-    <div class="song-list">
+    <div class="song-grid">
         <c:forEach var="song" items="${songs}">
-            <div class="song-item">
-                <c:if test="${not empty song.coverImage}">
-                    <img src="${song.coverImage}" alt="${song.title}">
-                </c:if>
-                <div class="song-info">
+            <div class="song-tile">
+                <!-- Slika pesme na vrhu -->
+                <c:choose>
+                    <c:when test="${not empty song.coverImage}">
+                        <img src="${song.coverImage}" alt="${song.title}" class="song-image">
+                    </c:when>
+                    <c:otherwise>
+                        <div class="song-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            🎵
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+                
+                <!-- Sadržaj ispod slike -->
+                <div class="song-content">
                     <div class="song-title">${song.title}</div>
-                    <div>🎤 Artist: ${song.artist.fullName}</div>
-                    <div>🎵 Genre: ${song.genre.name}</div>
-                    <c:if test="${song.album != null}">
-                        <div>📀 Album: ${song.album.title}</div>
-                    </c:if>
-                    <div>⏱️ ${song.duration} sec</div>
                     
-                    <div class="download-info">
+                    <div class="song-meta">
+                        <span class="song-meta-icon">🎤</span>
+                        <span>${song.artist.fullName}</span>
+                    </div>
+                    
+                    <div class="song-meta">
+                        <span class="song-meta-icon">🎵</span>
+                        <span>${song.genre.name}</span>
+                    </div>
+                    
+                    <c:if test="${song.album != null}">
+                        <div class="song-meta">
+                            <span class="song-meta-icon">📀</span>
+                            <span>${song.album.title}</span>
+                        </div>
+                    </c:if>
+                    
+                    <div class="song-meta">
+                        <span class="song-meta-icon">⏱️</span>
+                        <span>${song.duration} sec</span>
+                    </div>
+                    
+                    <!-- Download sekcija -->
+                    <div class="download-section">
                         <!-- Preview uvek dostupan svima -->
-                        <a href="/preview/${song.id}" class="preview-link">🎧 Preview (30s)</a>
+                        <a href="/preview/${song.id}" class="preview-link">
+                            <span>🎧</span>
+                            <span>Preview</span>
+                        </a>
                         
                         <!-- Download samo za registrovane -->
                         <c:choose>
                             <c:when test="${song.allowDownload}">
                                 <c:choose>
                                     <c:when test="${isLoggedIn}">
-                                        <a href="/download/${song.id}" style="color: #4CAF50;">📥 Download Full Track</a>
+                                        <a href="/download/${song.id}" class="download-link">
+                                            <span>📥</span>
+                                            <span>Download</span>
+                                        </a>
                                     </c:when>
                                     <c:otherwise>
-                                        <span style="color: #ccc;">📥 Register to Download</span>
+                                        <span class="register-prompt">Register to Download</span>
                                     </c:otherwise>
                                 </c:choose>
                             </c:when>
                             <c:otherwise>
-                                <span style="color: #ff4757;">🚫 Download Not Available</span>
+                                <span class="download-unavailable">No Download</span>
                             </c:otherwise>
                         </c:choose>
                     </div>

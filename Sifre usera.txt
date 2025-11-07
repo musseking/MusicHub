@@ -1,4 +1,7 @@
 Svi user-i imaju šifru:
 password123
 
+Vasa
+vasa123
+
 To je u bazi: $2a$10$TLQqsYNFLz1BnnuoPMeV6uUUMaMo0lSaBuxMGhCtGQgMFT3CBpsSC encryptovano
