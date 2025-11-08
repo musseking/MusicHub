@@ -99,6 +99,7 @@
         .login-btn {
             color: #333;
             text-decoration: none;
+            text-align: center;
             background: rgba(255, 255, 255, 0.9);
             padding: 0.5rem 1rem;
             border-radius: 20px;
