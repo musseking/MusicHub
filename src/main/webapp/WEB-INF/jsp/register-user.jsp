@@ -223,7 +223,7 @@ button:hover {
 			<button type="submit">👤 Add User</button>
 		</form>
 
-		<a href="/admin/users" class="bottom-link">← Back to All Users</a>
+		<a href="/users" class="bottom-link">← Back to All Users</a>
 		<a href="<c:url value='/'/>" class="back-link">← Back to Dashboard</a>
 	</div>
 </body>

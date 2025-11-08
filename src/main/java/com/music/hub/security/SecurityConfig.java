@@ -36,7 +36,7 @@ public class SecurityConfig {
                 ).permitAll()
                 
                 // ZAŠTIĆENE RUTE - samo za logovane korisnike
-                .requestMatchers("/download/**", "/user/**").authenticated()
+                .requestMatchers("/download/**", "/user/**", "/users", "/users/**").authenticated()
                 
                 // ADMIN RUTE - samo za admine
                 .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -46,8 +46,7 @@ public class SecurityConfig {
                 
                 .requestMatchers("/admin/register-user").hasRole("ADMIN")
                 
-                .requestMatchers("/admin/users", "/admin/users/**").hasRole("ADMIN")
-                
+       
                 .requestMatchers("/register", "/admin/register-artist").permitAll()
                 
                 // SVE OSTALO - dozvoli svima (kao što želiš)
