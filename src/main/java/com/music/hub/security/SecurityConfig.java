@@ -16,9 +16,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    private final DeactivatedAccountFilter deactivatedAccountFilter;
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
+    public SecurityConfig(UserDetailsService userDetailsService, 
+                         DeactivatedAccountFilter deactivatedAccountFilter) {
         this.userDetailsService = userDetailsService;
+        this.deactivatedAccountFilter = deactivatedAccountFilter;
     }
 
     @Bean
@@ -27,42 +30,27 @@ public class SecurityConfig {
         
         http
             .authorizeHttpRequests(authz -> authz
-                // JAVNE RUTE - svi mogu pristupiti (i nelogovani)
                 .requestMatchers(
                     "/", "/index",  
                     "/login", "/static/**",
                     "/css/**", "/js/**", "/images/**",
-                    "/WEB-INF/jsp/**"  // dozvoli pristup JSP fajlovima
+                    "/music/**",
+                    "/WEB-INF/jsp/**"
                 ).permitAll()
-                
-                // ZAŠTIĆENE RUTE - samo za logovane korisnike
                 .requestMatchers("/download/**", "/user/**", "/users", "/users/**").authenticated()
-                
-                // ADMIN RUTE - samo za admine
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                
-                // ARTIST RUTE - samo za artiste
                 .requestMatchers("/artist/**").hasRole("ARTIST")
-                
                 .requestMatchers("/admin/register-user").hasRole("ADMIN")
-                
-       
                 .requestMatchers("/register", "/admin/register-artist").permitAll()
-                
-                // SVE OSTALO - dozvoli svima (kao što želiš)
                 .anyRequest().permitAll()
             )
-            
-            // OMOGUĆI FORM LOGIN (kao što želiš)
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)  // nakon logina, vrati na index
+                .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
-            
-            // OMOGUĆI LOGOUT (opciono)
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/?logout=true")
@@ -70,11 +58,8 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            
-            // KORISTI CUSTOM USER DETAILS SERVICE
+            .addFilterBefore(deactivatedAccountFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .userDetailsService(userDetailsService)
-            
-            // CSRF može ostati disable za testiranje
             .csrf(csrf -> csrf.disable());
 
         return http.build();
@@ -100,7 +85,6 @@ public class SecurityConfig {
         };
     }
     
- // Dodaj ovo privremeno u SecurityConfig
     @Bean
     public CommandLineRunner resetPassword() {
         return args -> {
@@ -109,9 +93,6 @@ public class SecurityConfig {
             System.out.println("=== NEW PASSWORD HASH ===");
             System.out.println(newEncodedPassword);
             System.out.println("=== UPDATE YOUR DATABASE WITH THIS ===");
-            
-            // Kopiraj ovaj hash i update-uj bazu:
-            // UPDATE users SET password = 'NEW_HASH_HERE' WHERE username = 'boris_brejcha';
         };
     }
 }
