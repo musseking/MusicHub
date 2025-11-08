@@ -170,6 +170,49 @@
             align-items: center;
         }
         
+        /* SEARCH STYLES */
+        .search-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .search-input {
+            padding: 0.7rem 1rem;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 0.9rem;
+            width: 250px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .search-input::placeholder {
+            color: #666;
+        }
+
+        /* SEARCH RESULTS INFO */
+        .search-info {
+            margin: 1rem 0;
+            color: #ccc;
+            font-style: italic;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #ccc;
+            font-style: italic;
+            padding: 3rem;
+            font-size: 1.1rem;
+        }
+
         /* KOMPAKTNI GRID TILE LAYOUT */
         .song-grid {
             display: grid;
@@ -286,6 +329,10 @@
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 0.8rem;
             }
+            
+            .search-input {
+                width: 200px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -310,6 +357,10 @@
             .song-meta {
                 font-size: 0.75rem;
             }
+            
+            .search-input {
+                width: 150px;
+            }
         }
 
         header h1 {
@@ -322,6 +373,11 @@
 <header>
     <h1>🎧 MusicHub</h1>
     <div class="user-display">
+        <!-- SEARCH CONTAINER -->
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search songs, artists, or genres..." id="searchInput">
+        </div>
+        
         <c:choose>
             <c:when test="${isLoggedIn}">
                 <!-- PRIKAZ ZA ULOGOVANE KORISNIKE -->
@@ -332,26 +388,19 @@
                     </div>
                 </div>
                 
-                <!-- DODATO: Poseban prikaz za ADMIN korisnike -->
-                <sec:authorize access="hasRole('ADMIN')">
-                    <div class="admin-buttons">
-                        <a href="/admin/users" class="show-users-btn">
-                            👥 Show All Users
-                        </a>
-                        <form action="/logout" method="post" style="display: inline; margin: 0;">
-                            <button type="submit" class="logout-btn">Logout</button>
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        </form>
-                    </div>
-                </sec:authorize>
-                
-                <!-- PRIKAZ ZA OSTALE ULOGOVANE KORISNIKE (NON-ADMIN) -->
-                <sec:authorize access="!hasRole('ADMIN')">
+               
+                <div class="admin-buttons">
+                    <a href="/users" class="show-users-btn">
+                        👥 Show All Users
+                    </a>
                     <form action="/logout" method="post" style="display: inline; margin: 0;">
                         <button type="submit" class="logout-btn">Logout</button>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     </form>
-                </sec:authorize>
+                </div>
+                
+                
+                
             </c:when>
             
             <c:otherwise>
@@ -372,11 +421,12 @@
 </header>
 
 <main>
-    <h2>Featured Tracks</h2>
+    <h2 id="pageTitle">Featured Tracks</h2>
+    <div class="search-info" id="searchInfo" style="display: none;"></div>
     
-    <div class="song-grid">
+    <div class="song-grid" id="songGrid">
         <c:forEach var="song" items="${songs}">
-            <div class="song-tile">
+            <div class="song-tile" data-title="${song.title}" data-artist="${song.artist.fullName}" data-genre="${song.genre.name}">
                 <!-- Slika pesme na vrhu -->
                 <c:choose>
                     <c:when test="${not empty song.coverImage}">
@@ -448,5 +498,127 @@
         </c:forEach>
     </div>
 </main>
+
+<script>
+    // Search functionality with debounce
+    const searchInput = document.getElementById('searchInput');
+    const songGrid = document.getElementById('songGrid');
+    const pageTitle = document.getElementById('pageTitle');
+    const searchInfo = document.getElementById('searchInfo');
+
+    let searchTimeout;
+
+    searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length === 0) {
+            showAllSongs();
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    });
+
+    function performSearch(query) {
+        const results = filterSongsByQuery(query);
+        
+        if (results.length === 0) {
+            displayNoResults(query);
+        } else {
+            displaySearchResults(results, query);
+        }
+    }
+
+    function filterSongsByQuery(query) {
+        const allSongs = Array.from(document.querySelectorAll('.song-tile'));
+        const queryLower = query.toLowerCase();
+        
+        return allSongs.filter(songTile => {
+            const title = songTile.getAttribute('data-title').toLowerCase();
+            const artist = songTile.getAttribute('data-artist').toLowerCase();
+            const genre = songTile.getAttribute('data-genre').toLowerCase();
+            
+            // Pretraga po naslovu, artistu i žanru
+            return title.includes(queryLower) || 
+                   artist.includes(queryLower) || 
+                   genre.includes(queryLower);
+        });
+    }
+
+    function displaySearchResults(results, query) {
+        // Sakrij sve pesme
+        const allSongs = document.querySelectorAll('.song-tile');
+        allSongs.forEach(song => song.style.display = 'none');
+        
+        // Prikaži samo rezultate pretrage
+        results.forEach(songTile => {
+            songTile.style.display = 'flex';
+        });
+        
+        // Ažuriraj naslov i informacije
+        pageTitle.textContent = `Search Results for "${query}"`;
+        searchInfo.textContent = `Found ${results.length} result(s)`;
+        searchInfo.style.display = 'block';
+    }
+
+    function displayNoResults(query) {
+        // Sakrij sve pesme
+        const allSongs = document.querySelectorAll('.song-tile');
+        allSongs.forEach(song => song.style.display = 'none');
+        
+        // Prikaži poruku da nema rezultata
+        songGrid.innerHTML = `
+            <div class="no-results">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                <div>No results found for "${query}"</div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">Try different keywords or browse all tracks</div>
+            </div>
+        `;
+        
+        pageTitle.textContent = `Search Results for "${query}"`;
+        searchInfo.style.display = 'none';
+    }
+
+    function showAllSongs() {
+        // Prikaži sve pesme
+        const allSongs = document.querySelectorAll('.song-tile');
+        allSongs.forEach(song => song.style.display = 'flex');
+        
+        // Vrati originalni naslov
+        pageTitle.textContent = 'Featured Tracks';
+        searchInfo.style.display = 'none';
+        
+        // Vrati originalni grid ako je bio zamenjen sa no-results porukom
+        if (!songGrid.querySelector('.song-tile')) {
+            location.reload();
+        }
+    }
+
+    // Clear search when clicking escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            searchInput.value = '';
+            showAllSongs();
+        }
+    });
+
+    // Initialize data attributes for all song tiles
+    document.addEventListener('DOMContentLoaded', function() {
+        const songTiles = document.querySelectorAll('.song-tile');
+        songTiles.forEach(tile => {
+            const title = tile.querySelector('.song-title').textContent;
+            const artist = tile.querySelector('.song-meta:nth-child(2) span:nth-child(2)').textContent;
+            const genre = tile.querySelector('.song-meta:nth-child(3) span:nth-child(2)').textContent;
+            
+            tile.setAttribute('data-title', title);
+            tile.setAttribute('data-artist', artist);
+            tile.setAttribute('data-genre', genre);
+        });
+    });
+</script>
 </body>
 </html>

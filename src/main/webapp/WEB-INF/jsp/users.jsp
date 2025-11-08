@@ -232,7 +232,11 @@
 </head>
 <body>
 <header>
-    <h1>🎧 MusicHub <span style="background: #ff4757; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; margin-left: 0.5rem;">ADMIN PANEL</span></h1>
+    <h1>🎧 MusicHub 
+        <c:if test="${isAdmin}">
+            <span style="background: #ff4757; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; margin-left: 0.5rem;">ADMIN PANEL</span>
+        </c:if>
+    </h1>
     <div>
         <a href="/" style="color: #222; text-decoration: none; background: rgba(255,255,255,0.8); padding: 0.5rem 1rem; border-radius: 20px; margin-right: 1rem;">← Back to Site</a>
         <form action="/logout" method="post" style="display: inline;">
@@ -243,10 +247,11 @@
 </header>
 
 <main>
-    <div class="admin-nav">
-        <a href="/admin/register-user" class="admin-nav-btn primary">👤 Add New User</a>
-        <a href="/admin/users" class="admin-nav-btn secondary">👥 Show All Users</a>
-    </div>
+    <c:if test="${isAdmin}">
+        <div class="admin-nav">
+            <a href="/admin/register-user" class="admin-nav-btn primary">👤 Add New User</a>
+        </div>
+    </c:if>
 
     <c:if test="${param.activated != null}">
         <div class="success-message">
@@ -287,7 +292,9 @@
                 <th>Role</th>
                 <th>Status</th>
                 <th>Registered</th>
-                <th>Actions</th>
+                <c:if test="${isAdmin}">
+                    <th>Actions</th>
+                </c:if>
             </tr>
         </thead>
         <tbody>
@@ -333,25 +340,27 @@
                             </c:otherwise>
                         </c:choose>
                     </td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${user.isActive && !user.isAdmin}">
-                                <form action="/admin/users/${user.id}/deactivate" method="post" style="display: inline;">
-                                    <button type="submit" class="action-btn deactivate">Deactivate</button>
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                </form>
-                            </c:when>
-                            <c:when test="${!user.isActive && !user.isAdmin}">
-                                <form action="/admin/users/${user.id}/activate" method="post" style="display: inline;">
-                                    <button type="submit" class="action-btn activate">Activate</button>
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                </form>
-                            </c:when>
-                            <c:otherwise>
-                                <span style="color: #ccc;">No actions</span>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
+                    <c:if test="${isAdmin}">
+                        <td>
+                            <c:choose>
+                                <c:when test="${user.isActive && !user.isAdmin}">
+                                    <form action="/admin/users/${user.id}/deactivate" method="post" style="display: inline;">
+                                        <button type="submit" class="action-btn deactivate">Deactivate</button>
+                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    </form>
+                                </c:when>
+                                <c:when test="${!user.isActive && !user.isAdmin}">
+                                    <form action="/admin/users/${user.id}/activate" method="post" style="display: inline;">
+                                        <button type="submit" class="action-btn activate">Activate</button>
+                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <span style="color: #ccc;">No actions</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </c:if>
                 </tr>
             </c:forEach>
         </tbody>
