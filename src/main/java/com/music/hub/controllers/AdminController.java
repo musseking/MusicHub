@@ -18,25 +18,21 @@ public class AdminController {
 		this.userService = userService;
 	}
 
-	// Prikaz svih korisnika - sada dostupan svim ulogovanim korisnicima
-	@GetMapping("/users")
+	// Prikaz svih korisnika
+	@GetMapping("/admin/users")
 	public String showAllUsers(Model model, Authentication authentication) {
-		// Proveri da li je korisnik ulogovan
-		if (authentication == null || !authentication.isAuthenticated()) {
-			return "redirect:/login";
+		if (!isAdmin(authentication)) {
+			return "redirect:/";
 		}
 
 		var users = userService.getAllUsers();
-		model.addAttribute("title", "All Users - MusicHub");
+		model.addAttribute("title", "All Users - MusicHub Admin");
 		model.addAttribute("users", users);
 		model.addAttribute("totalUsers", users.size());
 		model.addAttribute("totalArtists", userService.getAllArtists().size());
 		model.addAttribute("totalRegularUsers", userService.getAllRegularUsers().size());
-		
-		// Dodaj informaciju da li je admin
-		model.addAttribute("isAdmin", isAdmin(authentication));
 
-		return "users";
+		return "admin-users";
 	}
 
 	@GetMapping("/admin/register-user")
@@ -81,7 +77,7 @@ public class AdminController {
 		}
 	}
 
-	// Deaktiviraj korisnika - samo admin
+	// Deaktiviraj korisnika
 	@PostMapping("/admin/users/{id}/deactivate")
 	public String deactivateUser(@PathVariable Long id, Authentication authentication) {
 		if (!isAdmin(authentication)) {
@@ -89,10 +85,10 @@ public class AdminController {
 		}
 
 		userService.deactivateUser(id);
-		return "redirect:/users?deactivated=true";
+		return "redirect:/admin/users?deactivated=true";
 	}
 
-	// Aktiviraj korisnika - samo admin
+	// Aktiviraj korisnika
 	@PostMapping("/admin/users/{id}/activate")
 	public String activateUser(@PathVariable Long id, Authentication authentication) {
 		if (!isAdmin(authentication)) {
@@ -100,7 +96,7 @@ public class AdminController {
 		}
 
 		userService.activateUser(id);
-		return "redirect:/users?activated=true";
+		return "redirect:/admin/users?activated=true";
 	}
 
 	// Pomocna metoda za proveru admin role
