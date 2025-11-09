@@ -26,7 +26,6 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
-        /* Stil za user info u headeru */
         .user-display {
             display: flex;
             align-items: center;
@@ -171,7 +170,6 @@
             align-items: center;
         }
         
-        /* SEARCH STYLES */
         .search-container {
             position: relative;
             margin-right: 1rem;
@@ -199,7 +197,6 @@
             color: #666;
         }
 
-        /* SEARCH RESULTS INFO */
         .search-info {
             margin: 1rem 0;
             color: #ccc;
@@ -214,7 +211,6 @@
             font-size: 1.1rem;
         }
 
-        /* KOMPAKTNI GRID TILE LAYOUT */
         .song-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -242,7 +238,7 @@
         
         .song-image {
             width: 100%;
-            height: 220px;
+            height: 230px;
             object-fit: cover;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
@@ -277,25 +273,130 @@
             font-size: 0.75rem;
         }
         
+        /* AUDIO PLAYER STYLES */
+        .audio-player {
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .play-pause-btn {
+            background: #4CAF50;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .play-pause-btn:hover {
+            background: #45a049;
+            transform: scale(1.1);
+        }
+
+        .progress-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            min-width: 0;
+        }
+
+        .progress-bar {
+            position: relative;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            overflow: visible;
+        }
+
+        .progress {
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s ease;
+            position: relative;
+        }
+
+        .progress-handle {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+        }
+
+        .progress-bar:hover .progress-handle {
+            opacity: 1;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #ccc;
+        }
+
+        .current-time {
+            font-weight: bold;
+        }
+
+        /* PREVIEW LIMIT STYLING */
+        .preview-limit-marker {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: #ff4757;
+            z-index: 2;
+        }
+
+        .preview-limit-message {
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff6b81;
+            padding: 0.6rem;
+            border-radius: 6px;
+            margin-top: 0.6rem;
+            text-align: center;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 107, 129, 0.3);
+        }
+
+        .preview-limit-message a {
+            color: #4CAF50 !important;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
         .download-section {
             margin-top: 0.6rem;
             padding-top: 0.6rem;
             border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .preview-link {
-            color: #4CAF50;
-            text-decoration: none;
-            margin-right: 0.8rem;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.2rem;
-            font-size: 0.8rem;
-        }
-        
-        .preview-link:hover {
-            text-decoration: underline;
         }
         
         .download-link {
@@ -306,6 +407,7 @@
             align-items: center;
             gap: 0.2rem;
             font-size: 0.8rem;
+            cursor: pointer;
         }
         
         .download-link:hover {
@@ -324,7 +426,23 @@
             font-size: 0.75rem;
         }
 
-        /* Responsive adjustments */
+        .audio-info-message {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            padding: 0.6rem;
+            border-radius: 6px;
+            margin-top: 0.6rem;
+            text-align: center;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .audio-info-message a {
+            color: #4CAF50 !important;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .song-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -374,21 +492,18 @@
 <header>
     <h1>🎧 MusicHub</h1>
     <div class="user-display">
-        <!-- SEARCH CONTAINER -->
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Search songs, artists, or genres..." id="searchInput">
         </div>
         
         <c:choose>
             <c:when test="${isLoggedIn}">
-                <!-- PRIKAZ ZA ULOGOVANE KORISNIKE -->
                 <div class="user-info-container">
                     <div class="username">${displayName}</div>
                     <div class="user-role-badge ${loggedUserRole.toLowerCase()}">
                         ${loggedDisplayRole}
                     </div>
                 </div>
-                
                
                 <div class="admin-buttons">
                     <a href="/users" class="show-users-btn">
@@ -399,13 +514,9 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     </form>
                 </div>
-                
-                
-                
             </c:when>
             
             <c:otherwise>
-                <!-- PRIKAZ ZA NELOGOVANE KORISNIKE -->
                 <div class="user-info-container">
                     <div class="username">Guest User</div>
                     <div class="user-role-badge not-registered">
@@ -428,7 +539,6 @@
     <div class="song-grid" id="songGrid">
         <c:forEach var="song" items="${songs}">
             <div class="song-tile" data-title="${song.title}" data-artist="${song.artist.fullName}" data-genre="${song.genre.name}">
-                <!-- Slika pesme na vrhu -->
                 <c:choose>
                     <c:when test="${not empty song.coverImage}">
                         <img src="${song.coverImage}" alt="${song.title}" class="song-image">
@@ -440,7 +550,6 @@
                     </c:otherwise>
                 </c:choose>
                 
-                <!-- Sadržaj ispod slike -->
                 <div class="song-content">
                     <div class="song-title">${song.title}</div>
                     
@@ -466,33 +575,45 @@
                         <span>${song.duration} sec</span>
                     </div>
                     
-                    <!-- Download sekcija -->
                     <div class="download-section">
-                        <!-- Preview uvek dostupan svima -->
-                        <a href="/preview/${song.id}" class="preview-link">
-                            <span>🎧</span>
-                            <span>Preview</span>
-                        </a>
-                        
-                        <!-- Download samo za registrovane -->
-                        <c:choose>
-                            <c:when test="${song.allowDownload}">
-                                <c:choose>
-                                    <c:when test="${isLoggedIn}">
-                                        <a href="/download/${song.id}" class="download-link">
-                                            <span>📥</span>
-                                            <span>Download</span>
-                                        </a>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="register-prompt">Register to Download</span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="download-unavailable">No Download</span>
-                            </c:otherwise>
-                        </c:choose>
+                        <div class="audio-player" data-song-id="${song.id}" data-duration="${song.duration}">
+                            <div class="player-controls">
+                                <button class="play-pause-btn" type="button">
+                                    <span class="play-icon">▶</span>
+                                    <span class="pause-icon" style="display: none;">❚❚</span>
+                                </button>
+                                
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div class="progress"></div>
+                                        <div class="progress-handle"></div>
+                                    </div>
+                                    <div class="time-display">
+                                        <span class="current-time">0:00</span>
+                                        <span class="duration">/${song.duration} sec</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <c:choose>
+                                <c:when test="${song.allowDownload}">
+                                    <c:choose>
+                                        <c:when test="${isLoggedIn}">
+                                            <a href="/api/download/${song.id}" class="download-link" data-song-title="${song.title}" data-song-artist="${song.artist.fullName}">
+                                                <span>📥</span>
+                                                <span>Download</span>
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="register-prompt">Register to Download</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="download-unavailable">No Download</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -501,125 +622,414 @@
 </main>
 
 <script>
-    // Search functionality with debounce
-    const searchInput = document.getElementById('searchInput');
-    const songGrid = document.getElementById('songGrid');
-    const pageTitle = document.getElementById('pageTitle');
-    const searchInfo = document.getElementById('searchInfo');
-
-    let searchTimeout;
-
-    searchInput.addEventListener('input', function(e) {
-        const query = e.target.value.trim();
-        
-        clearTimeout(searchTimeout);
-        
-        if (query.length === 0) {
-            showAllSongs();
-            return;
-        }
-        
-        searchTimeout = setTimeout(() => {
-            performSearch(query);
-        }, 300);
-    });
-
-    function performSearch(query) {
-        const results = filterSongsByQuery(query);
-        
-        if (results.length === 0) {
-            displayNoResults(query);
-        } else {
-            displaySearchResults(results, query);
-        }
-    }
-
-    function filterSongsByQuery(query) {
-        const allSongs = Array.from(document.querySelectorAll('.song-tile'));
-        const queryLower = query.toLowerCase();
-        
-        return allSongs.filter(songTile => {
-            const title = songTile.getAttribute('data-title').toLowerCase();
-            const artist = songTile.getAttribute('data-artist').toLowerCase();
-            const genre = songTile.getAttribute('data-genre').toLowerCase();
-            
-            // Pretraga po naslovu, artistu i žanru
-            return title.includes(queryLower) || 
-                   artist.includes(queryLower) || 
-                   genre.includes(queryLower);
-        });
-    }
-
-    function displaySearchResults(results, query) {
-        // Sakrij sve pesme
-        const allSongs = document.querySelectorAll('.song-tile');
-        allSongs.forEach(song => song.style.display = 'none');
-        
-        // Prikaži samo rezultate pretrage
-        results.forEach(songTile => {
-            songTile.style.display = 'flex';
-        });
-        
-        // Ažuriraj naslov i informacije
-        pageTitle.textContent = `Search Results for "${query}"`;
-        searchInfo.textContent = `Found ${results.length} result(s)`;
-        searchInfo.style.display = 'block';
-    }
-
-    function displayNoResults(query) {
-        // Sakrij sve pesme
-        const allSongs = document.querySelectorAll('.song-tile');
-        allSongs.forEach(song => song.style.display = 'none');
-        
-        // Prikaži poruku da nema rezultata
-        songGrid.innerHTML = `
-            <div class="no-results">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
-                <div>No results found for "${query}"</div>
-                <div style="margin-top: 0.5rem; font-size: 0.9rem;">Try different keywords or browse all tracks</div>
-            </div>
-        `;
-        
-        pageTitle.textContent = `Search Results for "${query}"`;
-        searchInfo.style.display = 'none';
-    }
-
-    function showAllSongs() {
-        // Prikaži sve pesme
-        const allSongs = document.querySelectorAll('.song-tile');
-        allSongs.forEach(song => song.style.display = 'flex');
-        
-        // Vrati originalni naslov
-        pageTitle.textContent = 'Featured Tracks';
-        searchInfo.style.display = 'none';
-        
-        // Vrati originalni grid ako je bio zamenjen sa no-results porukom
-        if (!songGrid.querySelector('.song-tile')) {
-            location.reload();
-        }
-    }
-
-    // Clear search when clicking escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            searchInput.value = '';
-            showAllSongs();
-        }
-    });
-
-    // Initialize data attributes for all song tiles
+    // POBOLJŠANI AUDIO PLAYER SA DIREKTNIM TESTIRANJEM ENDPOINTA
     document.addEventListener('DOMContentLoaded', function() {
-        const songTiles = document.querySelectorAll('.song-tile');
-        songTiles.forEach(tile => {
-            const title = tile.querySelector('.song-title').textContent;
-            const artist = tile.querySelector('.song-meta:nth-child(2) span:nth-child(2)').textContent;
-            const genre = tile.querySelector('.song-meta:nth-child(3) span:nth-child(2)').textContent;
-            
-            tile.setAttribute('data-title', title);
-            tile.setAttribute('data-artist', artist);
-            tile.setAttribute('data-genre', genre);
+        console.log('=== INITIALIZING AUDIO PLAYER WITH ENDPOINT TESTING ===');
+        
+        // Global audio state
+        window.audioUnlocked = false;
+        
+        // Unlock audio na bilo koji user interaction
+        document.addEventListener('click', function() {
+            if (!window.audioUnlocked) {
+                console.log('🔓 Audio unlocked by user interaction');
+                window.audioUnlocked = true;
+            }
         });
+        
+        initializeAudioPlayers();
+        initializeDownloadButtons();
+        initializeSearch();
     });
+
+    function initializeAudioPlayers() {
+        const audioPlayers = document.querySelectorAll('.audio-player');
+        console.log('Found audio players:', audioPlayers.length);
+        
+        // Globalni audio element za sve playere
+        let globalAudio = null;
+        let currentPlayer = null;
+        let isSeeking = false;
+        
+        audioPlayers.forEach((player, index) => {
+            const playBtn = player.querySelector('.play-pause-btn');
+            const playIcon = player.querySelector('.play-icon');
+            const pauseIcon = player.querySelector('.pause-icon');
+            const progressBar = player.querySelector('.progress-bar');
+            const progress = player.querySelector('.progress');
+            const currentTimeEl = player.querySelector('.current-time');
+            const durationEl = player.querySelector('.duration');
+            
+            const songId = player.getAttribute('data-song-id');
+            const isLoggedIn = ${isLoggedIn};
+            
+            console.log(`Setting up player ${index} for song ${songId}`);
+            
+            // Format time function
+            function formatTime(seconds) {
+                if (isNaN(seconds)) return '0:00';
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+            
+            function showInfoMessage(message, isPreview = false) {
+                removeMessages();
+                const messageDiv = document.createElement('div');
+                messageDiv.className = isPreview ? 'preview-limit-message' : 'audio-info-message';
+                messageDiv.innerHTML = message;
+                player.appendChild(messageDiv);
+                
+                // Automatski ukloni poruku nakon 5 sekundi
+                setTimeout(() => {
+                    if (messageDiv.parentNode === player) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+            
+            function removeMessages() {
+                const messages = player.querySelectorAll('.preview-limit-message, .audio-info-message');
+                messages.forEach(msg => msg.remove());
+            }
+            
+            function showPreviewLimitMessage() {
+                showInfoMessage('🎧 Preview limited to 60 seconds - <a href="/login" style="color: #4CAF50; font-weight: bold;">Login for full access</a>', true);
+            }
+            
+            // Testiraj audio endpoint
+            function testAudioEndpoint(songId) {
+                return new Promise((resolve) => {
+                    const audioSource = isLoggedIn ? `/stream/${songId}` : `/preview/${songId}`;
+                    console.log('🔍 Testing audio endpoint:', audioSource);
+                    
+                    fetch(audioSource, { method: 'HEAD' })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('✅ Audio endpoint OK:', audioSource);
+                                resolve(true);
+                            } else {
+                                console.log('❌ Audio endpoint failed:', audioSource, response.status);
+                                resolve(false);
+                            }
+                        })
+                        .catch(error => {
+                            console.log('❌ Audio endpoint error:', audioSource, error);
+                            resolve(false);
+                        });
+                });
+            }
+            
+            // Play funkcija - POBOLJŠANA SA ENDPOINT TESTING-OM
+            async function playAudio() {
+                console.log('🎵 Attempting to play audio for song:', songId);
+                
+                removeMessages();
+                
+                // Proveri da li je audio unlocked
+                if (!window.audioUnlocked) {
+                    console.log('🔒 Audio not unlocked yet');
+                    showInfoMessage('🎧 Click anywhere on the page first, then click play to listen');
+                    return;
+                }
+                
+                // Testiraj endpoint pre nego što pokušaš da reprodukuješ
+                const endpointWorking = await testAudioEndpoint(songId);
+                if (!endpointWorking) {
+                    showInfoMessage('🔇 Audio service temporarily unavailable - please try again later');
+                    return;
+                }
+                
+                // Zaustavi prethodni audio ako postoji
+                if (globalAudio && currentPlayer !== player) {
+                    globalAudio.pause();
+                    const prevPlayer = currentPlayer;
+                    if (prevPlayer) {
+                        const prevPlayIcon = prevPlayer.querySelector('.play-icon');
+                        const prevPauseIcon = prevPlayer.querySelector('.pause-icon');
+                        if (prevPlayIcon) prevPlayIcon.style.display = 'block';
+                        if (prevPauseIcon) prevPauseIcon.style.display = 'none';
+                    }
+                }
+                
+                // Kreiraj novi audio element ako ne postoji ili ako je drugi player
+                if (!globalAudio || currentPlayer !== player) {
+                    globalAudio = new Audio();
+                    currentPlayer = player;
+                    
+                    const audioSource = isLoggedIn ? `/stream/${songId}` : `/preview/${songId}`;
+                    globalAudio.src = audioSource;
+                    globalAudio.preload = 'metadata';
+                    
+                    console.log('🎵 Using audio source:', audioSource);
+                    
+                    // Resetuj progress bar
+                    progress.style.width = '0%';
+                    currentTimeEl.textContent = '0:00';
+                    
+                    // Event listeners za NOVI audio element
+                    globalAudio.addEventListener('loadeddata', function() {
+                        console.log('✅ Audio loaded successfully for song:', songId);
+                    });
+                    
+                    globalAudio.addEventListener('canplay', function() {
+                        console.log('🎵 Audio can play for song:', songId);
+                    });
+                    
+                    globalAudio.addEventListener('timeupdate', function() {
+                        if (!isSeeking && globalAudio.duration) {
+                            updateProgress();
+                        }
+                    });
+                    
+                    globalAudio.addEventListener('ended', function() {
+                        console.log('⏹️ Audio ended for song:', songId);
+                        playIcon.style.display = 'block';
+                        pauseIcon.style.display = 'none';
+                        progress.style.width = '0%';
+                        currentTimeEl.textContent = '0:00';
+                    });
+                    
+                    globalAudio.addEventListener('error', function(e) {
+                        console.error('❌ Audio error for song', songId, ':', e);
+                        console.error('Audio error details:', globalAudio.error);
+                        
+                        showInfoMessage('🔇 Could not load audio - please try another song');
+                        playIcon.style.display = 'block';
+                        pauseIcon.style.display = 'none';
+                    });
+                }
+                
+                // Pokušaj da reprodukuješ audio
+                globalAudio.play()
+                    .then(() => {
+                        console.log('✅ Audio playing successfully for song:', songId);
+                        playIcon.style.display = 'none';
+                        pauseIcon.style.display = 'block';
+                        
+                        // Dodaj preview info poruku za nelogovane
+                        if (!isLoggedIn) {
+                            showInfoMessage('🎧 Listening to 60-second preview - <a href="/login" style="color: #4CAF50; font-weight: bold;">Login for full access</a>');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Play failed for song:', songId, error);
+                        
+                        if (error.name === 'NotAllowedError') {
+                            showInfoMessage('🔇 Please click anywhere on the page first, then click play');
+                        } else if (error.name === 'NotSupportedError') {
+                            showInfoMessage('🔇 Audio format not supported');
+                        } else {
+                            showInfoMessage('🔇 Could not play audio - please try again');
+                        }
+                        
+                        playIcon.style.display = 'block';
+                        pauseIcon.style.display = 'none';
+                    });
+            }
+            
+            // Pause funkcija
+            function pauseAudio() {
+                console.log('⏸️ Pausing audio for song:', songId);
+                if (globalAudio && currentPlayer === player) {
+                    globalAudio.pause();
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                }
+            }
+            
+            // Update progress
+            function updateProgress() {
+                if (globalAudio && globalAudio.duration && !isSeeking) {
+                    const percent = (globalAudio.currentTime / globalAudio.duration) * 100;
+                    progress.style.width = percent + '%';
+                    currentTimeEl.textContent = formatTime(globalAudio.currentTime);
+                    
+                    // Preview limit za nelogovane
+                    if (!isLoggedIn && globalAudio.currentTime >= 60) {
+                        globalAudio.pause();
+                        playIcon.style.display = 'block';
+                        pauseIcon.style.display = 'none';
+                        showPreviewLimitMessage();
+                    }
+                }
+            }
+            
+            // Seek funkcija - POBOLJŠANA
+            function seekToPosition(clientX) {
+                if (!globalAudio || !globalAudio.duration) return;
+                
+                const rect = progressBar.getBoundingClientRect();
+                const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                const newTime = percent * globalAudio.duration;
+                
+                // Postavi seeking flag
+                isSeeking = true;
+                
+                if (!isLoggedIn && newTime > 60) {
+                    globalAudio.currentTime = 60;
+                    if (!globalAudio.paused) {
+                        pauseAudio();
+                    }
+                    showPreviewLimitMessage();
+                } else {
+                    globalAudio.currentTime = newTime;
+                }
+                
+                // Instantly update progress bar
+                progress.style.width = (newTime / globalAudio.duration) * 100 + '%';
+                currentTimeEl.textContent = formatTime(newTime);
+                
+                // Reset seeking flag nakon kratkog vremena
+                setTimeout(() => {
+                    isSeeking = false;
+                }, 100);
+            }
+            
+            // Event listeners
+            playBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('🎵 Play button clicked for song:', songId);
+                
+                if (globalAudio && !globalAudio.paused && currentPlayer === player) {
+                    pauseAudio();
+                } else {
+                    playAudio();
+                }
+            });
+            
+            progressBar.addEventListener('click', function(e) {
+                if (globalAudio) {
+                    seekToPosition(e.clientX);
+                }
+            });
+            
+            // Inicijalizacija
+            currentTimeEl.textContent = '0:00';
+            const songDuration = parseInt(player.getAttribute('data-duration'));
+            if (songDuration) {
+                durationEl.textContent = '/' + formatTime(songDuration);
+            }
+        });
+    }
+
+    function initializeDownloadButtons() {
+        console.log('=== INITIALIZING DOWNLOAD BUTTONS ===');
+        
+        const downloadLinks = document.querySelectorAll('.download-link');
+        console.log('Found download links:', downloadLinks.length);
+        
+        downloadLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const songId = this.href.split('/').pop();
+                const songTitle = this.getAttribute('data-song-title') || 
+                                this.closest('.song-tile').querySelector('.song-title').textContent;
+                const songArtist = this.getAttribute('data-song-artist') || 
+                                 this.closest('.song-tile').querySelector('.song-meta:nth-child(2) span:nth-child(2)').textContent;
+                
+                const fileName = `${songArtist} - ${songTitle}.wav`;
+                console.log('Download requested for:', fileName, 'ID:', songId);
+                
+                if (confirm(`Do you want to download "${fileName}"?`)) {
+                    window.location.href = '/api/download/' + songId;
+                }
+            });
+        });
+    }
+
+    function initializeSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const songGrid = document.getElementById('songGrid');
+        const pageTitle = document.getElementById('pageTitle');
+        const searchInfo = document.getElementById('searchInfo');
+
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            
+            clearTimeout(searchTimeout);
+            
+            if (query.length === 0) {
+                showAllSongs();
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        });
+
+        function performSearch(query) {
+            const results = filterSongsByQuery(query);
+            
+            if (results.length === 0) {
+                displayNoResults(query);
+            } else {
+                displaySearchResults(results, query);
+            }
+        }
+
+        function filterSongsByQuery(query) {
+            const allSongs = Array.from(document.querySelectorAll('.song-tile'));
+            const queryLower = query.toLowerCase();
+            
+            return allSongs.filter(songTile => {
+                const title = songTile.getAttribute('data-title').toLowerCase();
+                const artist = songTile.getAttribute('data-artist').toLowerCase();
+                const genre = songTile.getAttribute('data-genre').toLowerCase();
+                
+                return title.includes(queryLower) || 
+                       artist.includes(queryLower) || 
+                       genre.includes(queryLower);
+            });
+        }
+
+        function displaySearchResults(results, query) {
+            const allSongs = document.querySelectorAll('.song-tile');
+            allSongs.forEach(song => song.style.display = 'none');
+            
+            results.forEach(songTile => {
+                songTile.style.display = 'flex';
+            });
+            
+            pageTitle.textContent = `Search Results for "${query}"`;
+            searchInfo.textContent = `Found ${results.length} result(s)`;
+            searchInfo.style.display = 'block';
+        }
+
+        function displayNoResults(query) {
+            const allSongs = document.querySelectorAll('.song-tile');
+            allSongs.forEach(song => song.style.display = 'none');
+            
+            songGrid.innerHTML = `
+                <div class="no-results">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                    <div>No results found for "${query}"</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.9rem;">Try different keywords or browse all tracks</div>
+                </div>
+            `;
+            
+            pageTitle.textContent = `Search Results for "${query}"`;
+            searchInfo.style.display = 'none';
+        }
+
+        function showAllSongs() {
+            const allSongs = document.querySelectorAll('.song-tile');
+            allSongs.forEach(song => song.style.display = 'flex');
+            
+            pageTitle.textContent = 'Featured Tracks';
+            searchInfo.style.display = 'none';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                showAllSongs();
+            }
+        });
+    }
 </script>
 </body>
 </html>
