@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
 <title>MusicHub - Share & Discover Music</title>
@@ -24,13 +25,13 @@
 						<div class="user-role-badge ${loggedUserRole.toLowerCase()}">
 							${loggedDisplayRole}</div>
 					</div>
-					<a href="/messages" class="show-users-btn" style="margin-right: 0.5rem;">
-					    📨 Messages
-					    <c:if test="${unreadCount > 0}">
-					        <span style="background: #ff4757; color: white; border-radius: 50%; padding: 0.2rem 0.5rem; font-size: 0.7rem; margin-left: 0.3rem;">
-					            ${unreadCount}
-					        </span>
-					    </c:if>
+					<a href="/messages" class="show-users-btn"
+						style="margin-right: 0.5rem;"> 📨 Messages <c:if
+							test="${unreadCount > 0}">
+							<span
+								style="background: #ff4757; color: white; border-radius: 50%; padding: 0.2rem 0.5rem; font-size: 0.7rem; margin-left: 0.3rem;">
+								${unreadCount} </span>
+						</c:if>
 					</a>
 
 					<div class="admin-buttons">
@@ -82,21 +83,21 @@
 					<div class="song-content">
 						<div class="song-title">${song.title}</div>
 
-						<!-- Privremeno dodaj debug informacije -->
-<div class="song-meta artist-meta-container">
-    <span class="song-meta-icon">🎤</span>
-    <div class="artist-name-container" data-artist-id=${song.artist.id}>
-        <span class="artist-name">
-            ${song.artist.fullName}
-        </span>
-        
-        <!-- Dropdown bez ID-a, koristićemo data atribut -->
-        <div class="artist-dropdown" id="dropdown-<c:out value='${song.artist.id}'/>" style="display: none;">
-            <button class="follow-btn" data-artist-id="${song.artist.id}">Follow</button>
-    		<button class="message-btn" data-artist-id="${song.artist.id}" data-artist-name="${song.artist.fullName}">💌 Message</button>
-        </div>
-    </div>
-</div>
+						<div class="song-meta artist-meta-container">
+							<span class="song-meta-icon">🎤</span>
+							<div class="artist-name-container"
+								data-artist-id=${song.artist.id}>
+								<span class="artist-name"> ${song.artist.fullName} </span>
+
+								<div class="artist-dropdown"
+									id="dropdown-<c:out value='${song.artist.id}'/>"
+									style="display: none;">
+									<button class="follow-btn" data-artist-id="${song.artist.id}">Follow</button>
+									<button class="message-btn" data-artist-id="${song.artist.id}"
+										data-artist-name="${fn:escapeXml(song.artist.fullName)}">💌 Message</button>
+								</div>
+							</div>
+						</div>
 
 						<div class="song-meta">
 							<span class="song-meta-icon">🎵</span> <span>${song.genre.name}</span>
@@ -111,6 +112,22 @@
 						<div class="song-meta">
 							<span class="song-meta-icon">⏱️</span> <span>${song.duration}
 								sec</span>
+						</div>
+
+						<!-- Rating Section -->
+						<div class="rating-section">
+						    <div class="rating-stars" data-song-id="${song.id}">
+						        <span class="star" data-rating="1" title="1 star - Poor">★</span>
+						        <span class="star" data-rating="2" title="2 stars - Fair">★</span>
+						        <span class="star" data-rating="3" title="3 stars - Good">★</span>
+						        <span class="star" data-rating="4" title="4 stars - Very Good">★</span>
+						        <span class="star" data-rating="5" title="5 stars - Excellent">★</span>
+						    </div>
+						    <div class="rating-info">
+						        <span class="average-rating">Not rated yet</span>
+						        <span class="rating-count">(0 ratings)</span>
+						        <span class="user-rating-badge" style="display: none;">Your rating: <span class="user-rating-value">0</span></span>
+						    </div>
 						</div>
 
 						<div class="download-section">
@@ -180,6 +197,8 @@
         initializeAudioPlayers();
         initializeDownloadButtons();
         initializeSearch();
+        initializeArtistFollow();
+        initializeSongRatings();
     });
 
     function initializeAudioPlayers() {
@@ -570,249 +589,439 @@
             }
         });
     }
-    
- // Dodaj ovaj kod u postojeći JavaScript u index.jsp
 
     function initializeArtistFollow() {
-    	console.log('=== INITIALIZING ARTIST FOLLOW FUNCTIONALITY ===');
-    
-	    const artistNames = document.querySelectorAll('.artist-name');
-	    console.log('Found artist names:', artistNames.length);
-    
-	    // Globalno praćenje otvorenih dropdown-ova
-	    let openDropdown = null;
-	    
-	    // Zatvori sve dropdown-ove
-	    function closeAllDropdowns() {
-	        document.querySelectorAll('.artist-dropdown').forEach(dropdown => {
-	            if (dropdown) {
-	                dropdown.style.display = 'none';
-	            }
-	        });
-	        openDropdown = null;
-	    }
-    
-    // Proveri follow status za artist-a
-    async function checkFollowStatus(artistId) {
-        console.log('🎯 checkFollowStatus called with artistId:', artistId, 'Type:', typeof artistId);
+        console.log('=== INITIALIZING ARTIST FOLLOW FUNCTIONALITY ===');
         
-        if (!${isLoggedIn}) {
-            console.log('👤 User not logged in, returning false');
-            return false;
+        const artistNames = document.querySelectorAll('.artist-name');
+        console.log('Found artist names:', artistNames.length);
+        
+        // Globalno praćenje otvorenih dropdown-ova
+        let openDropdown = null;
+        
+        // Zatvori sve dropdown-ove
+        function closeAllDropdowns() {
+            document.querySelectorAll('.artist-dropdown').forEach(dropdown => {
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+            });
+            openDropdown = null;
         }
         
-        // Proveri da li je artistId validan
-        if (!artistId || artistId === 'undefined' || artistId === 'null') {
-            console.error('❌ Invalid artistId:', artistId);
-            return false;
-        }
-        
-        try {
-            const url = '/api/follow/status/' + artistId;
-            console.log('🔍 Fetching from URL:', url);
+        // Proveri follow status za artist-a
+        async function checkFollowStatus(artistId) {
+            console.log('🎯 checkFollowStatus called with artistId:', artistId, 'Type:', typeof artistId);
             
-            const response = await fetch(url);
-            console.log('📡 Response status:', response.status, response.statusText);
-            
-            if (response.ok) {
-                const data = await response.json();
-                console.log('✅ Follow status data:', data);
-                return data.isFollowing;
-            } else {
-                console.warn('⚠️ Follow status check failed:', response.status);
+            if (!${isLoggedIn}) {
+                console.log('👤 User not logged in, returning false');
                 return false;
             }
-        } catch (error) {
-            console.error('❌ Error checking follow status:', error);
-            return false;
+            
+            // Proveri da li je artistId validan
+            if (!artistId || artistId === 'undefined' || artistId === 'null') {
+                console.error('❌ Invalid artistId:', artistId);
+                return false;
+            }
+            
+            try {
+                const url = '/api/follow/status/' + artistId;
+                console.log('🔍 Fetching from URL:', url);
+                
+                const response = await fetch(url);
+                console.log('📡 Response status:', response.status, response.statusText);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Follow status data:', data);
+                    return data.isFollowing;
+                } else {
+                    console.warn('⚠️ Follow status check failed:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error checking follow status:', error);
+                return false;
+            }
         }
-    }
-    
-    // Ažuriraj tekst dugmeta
-    function updateButtonText(button, isFollowing) {
-        if (isFollowing) {
-            button.textContent = 'Unfollow';
-            button.classList.add('unfollow');
-        } else {
-            button.textContent = 'Follow';
-            button.classList.remove('unfollow');
+        
+        // Ažuriraj tekst dugmeta
+        function updateButtonText(button, isFollowing) {
+            if (isFollowing) {
+                button.textContent = 'Unfollow';
+                button.classList.add('unfollow');
+            } else {
+                button.textContent = 'Follow';
+                button.classList.remove('unfollow');
+            }
+            console.log('Button updated:', button.textContent, 'isFollowing:', isFollowing);
         }
-        console.log('Button updated:', button.textContent, 'isFollowing:', isFollowing);
-    }
-    
-    // Obrada follow/unfollow akcije
-    // Obrada follow/unfollow akcije
-async function handleFollowAction(artistId, button) {
-    if (!${isLoggedIn}) {
-        showLoginPrompt();
-        return;
-    }
-    
-    const isCurrentlyFollowing = button.classList.contains('unfollow');
-    const action = isCurrentlyFollowing ? 'unfollow' : 'follow';
-    
-    // ISPRAVLJENO: Koristi obične stringove umesto template literals
-    const endpoint = '/api/' + action + '/' + artistId;
-    
-    console.log('🎯 Performing', action, 'for artist:', artistId, 'Endpoint:', endpoint);
-    
-    try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            credentials: 'include' // Obavezno za slanje cookie-ja
-        });
         
-        console.log('📡 Response status:', response.status);
-        
-        if (response.ok) {
-            // Uspješno ažurirano - promeni tekst dugmeta
-            updateButtonText(button, !isCurrentlyFollowing);
-            showFollowMessage(isCurrentlyFollowing ? 'unfollowed' : 'followed');
-            
-            // Zatvori dropdown nakon uspešne akcije
-            setTimeout(() => {
-                closeAllDropdowns();
-            }, 1000);
-        } else {
-            console.error('❌ Follow action failed:', response.status, response.statusText);
-            showFollowMessage('error');
-        }
-    } catch (error) {
-        console.error('❌ Error performing follow action:', error);
-        showFollowMessage('error');
-    }
-}
-    
-    // Prikaži poruku o follow akciji
-    function showFollowMessage(action) {
-        const messages = {
-            'followed': '✅ Successfully followed artist!',
-            'unfollowed': '✅ Successfully unfollowed artist!',
-            'error': '❌ Error performing action'
-        };
-        
-        // Možete dodati notifikaciju ovde ako želite
-        console.log(messages[action]);
-        // Ili prikaži toast notifikaciju:
-        // alert(messages[action]);
-    }
-    
-    // Prikaži prompt za login
-    function showLoginPrompt() {
-        alert('Please login to follow artists!');
-    }
-    
-    // Dobij CSRF token
-    function getCsrfToken() {
-        return document.querySelector('input[name="_csrf"]')?.value || '';
-    }
-    
-    // Event listener za imena autora
-    artistNames.forEach(artistName => {
-        artistName.addEventListener('click', async function(e) {
-            e.stopPropagation();
-            
-            const artistContainer = this.closest('.artist-name-container');
-            const artistId = artistContainer.getAttribute('data-artist-id');
-            const dropdown = artistContainer.querySelector('.artist-dropdown');
-            
-            console.log('🎯 Artist clicked:', artistId, 'Dropdown found:', !!dropdown);
-            
-            if (!dropdown) {
-                console.error('Dropdown not found in container');
+        // Obrada follow/unfollow akcije
+        async function handleFollowAction(artistId, button) {
+            if (!${isLoggedIn}) {
+                showLoginPrompt();
                 return;
             }
             
-            // Zatvori prethodni dropdown
-            if (openDropdown && openDropdown !== dropdown) {
-                closeAllDropdowns();
-            }
+            const isCurrentlyFollowing = button.classList.contains('unfollow');
+            const action = isCurrentlyFollowing ? 'unfollow' : 'follow';
             
-            // Toggle dropdown
-            if (dropdown.style.display === 'block') {
-                dropdown.style.display = 'none';
-                openDropdown = null;
-            } else {
-                // Prikaži dropdown
-                dropdown.style.display = 'block';
-                openDropdown = dropdown;
+            // ISPRAVLJENO: Koristi obične stringove umesto template literals
+            const endpoint = '/api/' + action + '/' + artistId;
+            
+            console.log('🎯 Performing', action, 'for artist:', artistId, 'Endpoint:', endpoint);
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    credentials: 'include' // Obavezno za slanje cookie-ja
+                });
                 
-                // Postavi artist ID na dugme
-                const button = dropdown.querySelector('.follow-btn');
-                button.setAttribute('data-artist-id', artistId);
+                console.log('📡 Response status:', response.status);
                 
-                // Proveri follow status i ažuriraj dugme
-                if (${isLoggedIn}) {
-                    try {
-                        console.log('🔍 Checking follow status for artist:', artistId);
-                        const isFollowing = await checkFollowStatus(artistId);
-                        console.log('✅ Follow status result:', isFollowing);
-                        updateButtonText(button, isFollowing);
-                    } catch (error) {
-                        console.error('❌ Error checking follow status:', error);
+                if (response.ok) {
+                    // Uspješno ažurirano - promeni tekst dugmeta
+                    updateButtonText(button, !isCurrentlyFollowing);
+                    showFollowMessage(isCurrentlyFollowing ? 'unfollowed' : 'followed');
+                    
+                    // Zatvori dropdown nakon uspešne akcije
+                    setTimeout(() => {
+                        closeAllDropdowns();
+                    }, 1000);
+                } else {
+                    console.error('❌ Follow action failed:', response.status, response.statusText);
+                    showFollowMessage('error');
+                }
+            } catch (error) {
+                console.error('❌ Error performing follow action:', error);
+                showFollowMessage('error');
+            }
+        }
+        
+        // Prikaži poruku o follow akciji
+        function showFollowMessage(action) {
+            const messages = {
+                'followed': '✅ Successfully followed artist!',
+                'unfollowed': '✅ Successfully unfollowed artist!',
+                'error': '❌ Error performing action'
+            };
+            
+            // Možete dodati notifikaciju ovde ako želite
+            console.log(messages[action]);
+        }
+        
+        // Prikaži prompt za login
+        function showLoginPrompt() {
+            alert('Please login to follow artists!');
+        }
+        
+        // Event listener za imena autora
+        artistNames.forEach(artistName => {
+            artistName.addEventListener('click', async function(e) {
+                e.stopPropagation();
+                
+                const artistContainer = this.closest('.artist-name-container');
+                const artistId = artistContainer.getAttribute('data-artist-id');
+                const dropdown = artistContainer.querySelector('.artist-dropdown');
+                
+                console.log('🎯 Artist clicked:', artistId, 'Dropdown found:', !!dropdown);
+                
+                if (!dropdown) {
+                    console.error('Dropdown not found in container');
+                    return;
+                }
+                
+                // Zatvori prethodni dropdown
+                if (openDropdown && openDropdown !== dropdown) {
+                    closeAllDropdowns();
+                }
+                
+                // Toggle dropdown
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                    openDropdown = null;
+                } else {
+                    // Prikaži dropdown
+                    dropdown.style.display = 'block';
+                    openDropdown = dropdown;
+                    
+                    // Postavi artist ID na dugme
+                    const button = dropdown.querySelector('.follow-btn');
+                    button.setAttribute('data-artist-id', artistId);
+                    
+                    // Proveri follow status i ažuriraj dugme
+                    if (${isLoggedIn}) {
+                        try {
+                            console.log('🔍 Checking follow status for artist:', artistId);
+                            const isFollowing = await checkFollowStatus(artistId);
+                            console.log('✅ Follow status result:', isFollowing);
+                            updateButtonText(button, isFollowing);
+                        } catch (error) {
+                            console.error('❌ Error checking follow status:', error);
+                            updateButtonText(button, false);
+                        }
+                    } else {
                         updateButtonText(button, false);
                     }
-                } else {
-                    updateButtonText(button, false);
+                }
+            });
+        });
+        
+        // Event listener za follow dugmad
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('follow-btn')) {
+                e.stopPropagation();
+                const artistId = e.target.getAttribute('data-artist-id');
+                handleFollowAction(artistId, e.target);
+                
+                // Zatvori dropdown nakon akcije
+                setTimeout(() => {
+                    closeAllDropdowns();
+                }, 500);
+            }
+        });
+
+        // Event listener za message dugmad
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('message-btn')) {
+                e.stopPropagation();
+                const artistId = e.target.getAttribute('data-artist-id');
+                const artistName = e.target.getAttribute('data-artist-name');
+                openMessagePage(artistId, artistName);
+            }
+        });
+
+        // Funkcija za otvaranje stranice za slanje poruke
+        function openMessagePage(artistId, artistName) {
+            if (!${isLoggedIn}) {
+                showLoginPrompt();
+                return;
+            }
+            
+            // Preusmeri na stranicu za slanje poruke sa artist ID i imenom kao parametrima
+            window.location.href = '/send-message?artistId=' + artistId + '&artistName=' + encodeURIComponent(artistName);
+        }
+        
+        // Zatvori dropdown kada se klikne bilo gde drugde
+        document.addEventListener('click', function() {
+            closeAllDropdowns();
+        });
+        
+        // Spreči zatvaranje dropdown-a kada se klikne unutar njega
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.artist-dropdown')) {
+                e.stopPropagation();
+            }
+        });
+    }
+
+    function initializeSongRatings() {
+        console.log('=== INITIALIZING SONG RATINGS ===');
+        
+        const ratingContainers = document.querySelectorAll('.rating-stars');
+        console.log('Found rating containers:', ratingContainers.length);
+        
+        // Učitaj user ratings i stats za sve pesme
+        ratingContainers.forEach(container => {
+            const songId = container.getAttribute('data-song-id');
+            loadUserRating(songId, container);
+            loadRatingStats(songId, container);
+        });
+        
+        // Event listener za zvezdice
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('star')) {
+                const star = e.target;
+                const rating = parseInt(star.getAttribute('data-rating'));
+                const container = star.closest('.rating-stars');
+                const songId = container.getAttribute('data-song-id');
+                
+                if (!${isLoggedIn}) {
+                    showLoginPromptForRating();
+                    return;
+                }
+                
+                rateSong(songId, rating, container);
+            }
+        });
+
+        // Hover efekat za zvezdice
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.classList.contains('star')) {
+                const star = e.target;
+                const container = star.closest('.rating-stars');
+                const rating = parseInt(star.getAttribute('data-rating'));
+                
+                // Prikaži hover efekat samo ako korisnik nije već ocenio
+                if (!container.classList.contains('user-rated')) {
+                    highlightStars(container, rating, true);
                 }
             }
         });
-    });
-    
-    // Event listener za follow dugmad
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('follow-btn')) {
-            e.stopPropagation();
-            const artistId = e.target.getAttribute('data-artist-id');
-            handleFollowAction(artistId, e.target);
-            
-            // Zatvori dropdown nakon akcije
-            setTimeout(() => {
-                closeAllDropdowns();
-            }, 500);
+
+        document.addEventListener('mouseout', function(e) {
+            if (e.target.classList.contains('star')) {
+                const container = e.target.closest('.rating-stars');
+                // Vrati na originalno stanje nakon hover-a
+                if (!container.classList.contains('user-rated')) {
+                    const userRating = parseInt(container.getAttribute('data-user-rating') || '0');
+                    highlightStars(container, userRating, false);
+                }
+            }
+        });
+    }
+
+    // Učitaj user-ovu ocenu za pesmu
+    async function loadUserRating(songId, container) {
+	    if (!${isLoggedIn}) {
+	        // Ako korisnik nije ulogovan, samo resetuj zvezdice
+	        highlightUserRating(container, 0);
+	        return;
+	    }
+	    
+	    try {
+	        const response = await fetch('/api/ratings/song/' + songId + '/user');
+	        if (response.ok) {
+	            const data = await response.json();
+	            console.log('User rating loaded:', data.userRating, 'for song:', songId);
+	            highlightUserRating(container, data.userRating);
+	        }
+	    } catch (error) {
+	        console.error('Error loading user rating:', error);
+	        highlightUserRating(container, 0);
+	    }
+	}
+
+    // Učitaj statistiku ocena za pesmu
+    async function loadRatingStats(songId, container) {
+        try {
+            const response = await fetch('/api/ratings/song/' + songId + '/stats');
+            if (response.ok) {
+                const data = await response.json();
+                updateRatingStats(container, data.averageRating, data.ratingCount);
+            }
+        } catch (error) {
+            console.error('Error loading rating stats:', error);
         }
-    });
-    
-    // Zatvori dropdown kada se klikne bilo gde drugde
-    document.addEventListener('click', function() {
-        closeAllDropdowns();
-    });
-    
-    // Spreči zatvaranje dropdown-a kada se klikne unutar njega
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.artist-dropdown')) {
-            e.stopPropagation();
-        }
-    });
-    
- // Dodaj u initializeArtistFollow funkciju u index.jsp
+    }
 
- // Event listener za message dugmad
- document.addEventListener('click', function(e) {
-     if (e.target.classList.contains('message-btn')) {
-         e.stopPropagation();
-         const artistId = e.target.getAttribute('data-artist-id');
-         const artistName = e.target.getAttribute('data-artist-name');
-         openMessagePage(artistId, artistName);
-     }
- });
+    // Oceni pesmu
+    async function rateSong(songId, rating, container) {
+	    try {
+	        const response = await fetch('/api/ratings/song/' + songId + '?rating=' + rating, {
+	            method: 'POST',
+	            credentials: 'include'
+	        });
+	        
+	        if (response.ok) {
+	            const data = await response.json();
+	            // Oznaci da je korisnik ocenio i prikazi njegovu ocenu
+	            highlightUserRating(container, rating);
+	            updateRatingStats(container, data.averageRating, data.ratingCount);
+	            showRatingSuccessMessage(rating);
+	        } else {
+	            const errorData = await response.json();
+	            showRatingErrorMessage(errorData.error);
+	        }
+	    } catch (error) {
+	        console.error('Error rating song:', error);
+	        showRatingErrorMessage('Network error');
+	    }
+	}
+    
+    function highlightStars(container, rating, isHover = false) {
+        const stars = container.querySelectorAll('.star');
+        stars.forEach(star => {
+            const starRating = parseInt(star.getAttribute('data-rating'));
+            if (starRating <= rating) {
+                star.classList.add('active');
+                if (isHover) {
+                    star.classList.add('hover');
+                } else {
+                    star.classList.remove('hover');
+                }
+            } else {
+                star.classList.remove('active');
+                star.classList.remove('hover');
+            }
+        });
+    }
 
- // Funkcija za otvaranje stranice za slanje poruke
- function openMessagePage(artistId, artistName) {
-     if (!${isLoggedIn}) {
-         showLoginPrompt();
-         return;
-     }
-     
-     // Preusmeri na stranicu za slanje poruke sa artist ID i imenom kao parametrima
-     window.location.href = '/send-message?artistId=' + artistId + '&artistName=' + encodeURIComponent(artistName);
- }
-}
+    // Označi user-ovu ocenu
+    function highlightUserRating(container, userRating) {
+	    console.log('Highlighting user rating:', userRating, 'for container:', container);
+	    
+	    const stars = container.querySelectorAll('.star');
+	    
+	    if (userRating > 0) {
+	        // Korisnik je ocenio pesmu - označi zvezdice
+	        container.classList.add('user-rated');
+	        container.setAttribute('data-user-rating', userRating);
+	        
+	        stars.forEach(star => {
+	            const starRating = parseInt(star.getAttribute('data-rating'));
+	            if (starRating <= userRating) {
+	                star.classList.add('active');
+	            } else {
+	                star.classList.remove('active');
+	            }
+	            star.classList.remove('hover');
+	        });
+	    } else {
+	        // Korisnik nije ocenio pesmu - resetuj zvezdice
+	        container.classList.remove('user-rated');
+	        container.removeAttribute('data-user-rating');
+	        
+	        stars.forEach(star => {
+	            star.classList.remove('active');
+	            star.classList.remove('hover');
+	        });
+	    }
+	}
 
-// Pozovi funkciju kada se stranica učita
-document.addEventListener('DOMContentLoaded', function() {
-    initializeArtistFollow();
-});
+    // Ažuriraj statistiku ocena
+    function updateRatingStats(container, averageRating, ratingCount) {
+	    const ratingInfo = container.nextElementSibling;
+	    const averageElement = ratingInfo.querySelector('.average-rating');
+	    const countElement = ratingInfo.querySelector('.rating-count');
+	    const userRatingBadge = ratingInfo.querySelector('.user-rating-badge');
+	    const userRatingValue = ratingInfo.querySelector('.user-rating-value');
+	    
+	    if (averageRating > 0) {
+	        averageElement.textContent = averageRating + ' ★';
+	        countElement.textContent = '(' + ratingCount + ' rating' + (ratingCount !== 1 ? 's' : '') + ')';
+	    } else {
+	        averageElement.textContent = 'Not rated yet';
+	        countElement.textContent = '(0 ratings)';
+	    }
+	    
+	    // Prikaži user rating badge ako je korisnik ocenio
+	    const userRating = parseInt(container.getAttribute('data-user-rating') || '0');
+	    if (userRating > 0) {
+	        userRatingValue.textContent = userRating;
+	        userRatingBadge.style.display = 'inline-block';
+	    } else {
+	        userRatingBadge.style.display = 'none';
+	    }
+	}
+
+    // Prikaži poruke
+    function showRatingSuccessMessage(rating) {
+	    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+	    console.log(`✅ Rating ${rating}/5 saved successfully! ${stars}`);
+	    // Možete dodati toast notifikaciju:
+	    // showToast(`Rated ${rating} stars!`, 'success');
+	}
+	
+	function showRatingErrorMessage(message) {
+	    console.error('❌ Rating error:', message);
+	    alert('❌ ' + message);
+	}
+
+    function showLoginPromptForRating() {
+        alert('Please login to rate songs!');
+    }
 </script>
 </body>
 </html>

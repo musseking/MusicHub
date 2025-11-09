@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ page import="java.net.URLEncoder" %>
 <html>
 <head>
     <title>${title}</title>
@@ -196,6 +196,21 @@
             text-align: center;
             border: 1px solid rgba(76, 175, 80, 0.5);
         }
+        .reply-btn {
+		    background: #3742fa;
+		    color: white;
+		    
+		}
+		
+		.reply-btn:hover {
+		    background: #2f36d4;
+		    transform: translateY(-1px);
+		    
+		}
+		a.action-btn.reply-btn {
+		height:14px !important;
+		}
+		
     </style>
 </head>
 <body>
@@ -266,6 +281,8 @@
                                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                     </form>
                                 </c:if>
+                                 <a href="/send-message?artistId=${message.sender.id}&artistName=${message.sender.fullName}&subject=Re: ${message.subject}" 
+       								class="action-btn reply-btn">Reply</a>
                                 <form action="/messages/${message.id}/delete" method="post" style="display: inline;">
                                     <button type="submit" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this message?')">Delete</button>
                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
