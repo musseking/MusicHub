@@ -24,6 +24,14 @@
 						<div class="user-role-badge ${loggedUserRole.toLowerCase()}">
 							${loggedDisplayRole}</div>
 					</div>
+					<a href="/messages" class="show-users-btn" style="margin-right: 0.5rem;">
+					    📨 Messages
+					    <c:if test="${unreadCount > 0}">
+					        <span style="background: #ff4757; color: white; border-radius: 50%; padding: 0.2rem 0.5rem; font-size: 0.7rem; margin-left: 0.3rem;">
+					            ${unreadCount}
+					        </span>
+					    </c:if>
+					</a>
 
 					<div class="admin-buttons">
 						<a href="/users" class="show-users-btn"> 👥 Show All Users </a>
@@ -84,7 +92,8 @@
         
         <!-- Dropdown bez ID-a, koristićemo data atribut -->
         <div class="artist-dropdown" id="dropdown-<c:out value='${song.artist.id}'/>" style="display: none;">
-            <button class="follow-btn">Follow</button>
+            <button class="follow-btn" data-artist-id="${song.artist.id}">Follow</button>
+    		<button class="message-btn" data-artist-id="${song.artist.id}" data-artist-name="${song.artist.fullName}">💌 Message</button>
         </div>
     </div>
 </div>
@@ -565,23 +574,23 @@
  // Dodaj ovaj kod u postojeći JavaScript u index.jsp
 
     function initializeArtistFollow() {
-    console.log('=== INITIALIZING ARTIST FOLLOW FUNCTIONALITY ===');
+    	console.log('=== INITIALIZING ARTIST FOLLOW FUNCTIONALITY ===');
     
-    const artistNames = document.querySelectorAll('.artist-name');
-    console.log('Found artist names:', artistNames.length);
+	    const artistNames = document.querySelectorAll('.artist-name');
+	    console.log('Found artist names:', artistNames.length);
     
-    // Globalno praćenje otvorenih dropdown-ova
-    let openDropdown = null;
-    
-    // Zatvori sve dropdown-ove
-    function closeAllDropdowns() {
-        document.querySelectorAll('.artist-dropdown').forEach(dropdown => {
-            if (dropdown) {
-                dropdown.style.display = 'none';
-            }
-        });
-        openDropdown = null;
-    }
+	    // Globalno praćenje otvorenih dropdown-ova
+	    let openDropdown = null;
+	    
+	    // Zatvori sve dropdown-ove
+	    function closeAllDropdowns() {
+	        document.querySelectorAll('.artist-dropdown').forEach(dropdown => {
+	            if (dropdown) {
+	                dropdown.style.display = 'none';
+	            }
+	        });
+	        openDropdown = null;
+	    }
     
     // Proveri follow status za artist-a
     async function checkFollowStatus(artistId) {
@@ -775,6 +784,29 @@ async function handleFollowAction(artistId, button) {
             e.stopPropagation();
         }
     });
+    
+ // Dodaj u initializeArtistFollow funkciju u index.jsp
+
+ // Event listener za message dugmad
+ document.addEventListener('click', function(e) {
+     if (e.target.classList.contains('message-btn')) {
+         e.stopPropagation();
+         const artistId = e.target.getAttribute('data-artist-id');
+         const artistName = e.target.getAttribute('data-artist-name');
+         openMessagePage(artistId, artistName);
+     }
+ });
+
+ // Funkcija za otvaranje stranice za slanje poruke
+ function openMessagePage(artistId, artistName) {
+     if (!${isLoggedIn}) {
+         showLoginPrompt();
+         return;
+     }
+     
+     // Preusmeri na stranicu za slanje poruke sa artist ID i imenom kao parametrima
+     window.location.href = '/send-message?artistId=' + artistId + '&artistName=' + encodeURIComponent(artistName);
+ }
 }
 
 // Pozovi funkciju kada se stranica učita

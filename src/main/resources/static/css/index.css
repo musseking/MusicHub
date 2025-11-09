@@ -498,7 +498,7 @@ header h1 {
     z-index: 1000;
     margin-top: 0.3rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    min-width: 120px;
+    min-width: 140px;
 }
 
 .artist-dropdown::before {
@@ -583,4 +583,23 @@ header h1 {
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
     border-bottom: 6px solid rgba(255, 255, 255, 0.95);
+}
+
+.message-btn {
+    background: #3742fa;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    width: 100%;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.message-btn:hover {
+    background: #2f36d4;
+    transform: translateY(-1px);
 }
