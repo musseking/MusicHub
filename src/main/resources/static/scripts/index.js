@@ -1,4 +1,4 @@
-( () => {
+(function(isLoggedIn) {
 	// POBOLJŠANI AUDIO PLAYER SA DIREKTNIM TESTIRANJEM ENDPOINTA
 	    document.addEventListener('DOMContentLoaded', function() {
 	        console.log('=== INITIALIZING AUDIO PLAYER WITH ENDPOINT TESTING ===');
@@ -38,7 +38,6 @@
 	            const durationEl = player.querySelector('.duration');
 	            
 	            const songId = player.getAttribute('data-song-id');
-	            const isLoggedIn = ${isLoggedIn};
 	            
 	            console.log(`Setting up player ${index} for song ${songId}`);
 	            
@@ -407,6 +406,4 @@
 	            }
 	        });
 	    }
-}
-)(isLoggedIn);
-
+})(isLoggedIn);
