@@ -317,96 +317,95 @@ function initializeDownloadButtons() {
 }
 
 function initializeSearch() {
-	const searchInput = document.getElementById('searchInput');
-	const songGrid = document.getElementById('songGrid');
-	const pageTitle = document.getElementById('pageTitle');
-	const searchInfo = document.getElementById('searchInfo');
+    const searchInput = document.getElementById('searchInput');
+    const songGrid = document.getElementById('songGrid');
+    const pageTitle = document.getElementById('pageTitle');
+    const searchInfo = document.getElementById('searchInfo');
 
-	let searchTimeout;
+    // Čuvamo originalne pesme
+    const originalSongs = Array.from(songGrid.querySelectorAll('.song-tile'));
 
-	searchInput.addEventListener('input', function(e) {
-		const query = e.target.value.trim();
+    searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.trim();
 
-		clearTimeout(searchTimeout);
+        if (query.length === 0) {
+            // Prikaži sve pesme
+            originalSongs.forEach(song => {
+                song.style.display = 'flex';
+            });
+            // Sakrij no-results poruku ako postoji
+            const noResults = songGrid.querySelector('.no-results');
+            if (noResults) {
+                noResults.remove();
+            }
+            if (pageTitle) pageTitle.textContent = 'Featured Tracks';
+            if (searchInfo) searchInfo.style.display = 'none';
+            return;
+        }
 
-		if (query.length === 0) {
-			showAllSongs();
-			return;
-		}
+        // Normalna pretraga
+        const queryLower = query.toLowerCase();
+        let visibleCount = 0;
 
-		searchTimeout = setTimeout(() => {
-			performSearch(query);
-		}, 300);
-	});
+        originalSongs.forEach(song => {
+            const title = song.getAttribute('data-title').toLowerCase();
+            const artist = song.getAttribute('data-artist').toLowerCase();
+            const genre = song.getAttribute('data-genre').toLowerCase();
 
-	function performSearch(query) {
-		const results = filterSongsByQuery(query);
+            if (title.includes(queryLower) || artist.includes(queryLower) || genre.includes(queryLower)) {
+                song.style.display = 'flex';
+                visibleCount++;
+            } else {
+                song.style.display = 'none';
+            }
+        });
 
-		if (results.length === 0) {
-			displayNoResults(query);
-		} else {
-			displaySearchResults(results, query);
-		}
-	}
+        // Ukloni prethodnu no-results poruku
+        const existingNoResults = songGrid.querySelector('.no-results');
+        if (existingNoResults) {
+            existingNoResults.remove();
+        }
 
-	function filterSongsByQuery(query) {
-		const allSongs = Array.from(document.querySelectorAll('.song-tile'));
-		const queryLower = query.toLowerCase();
+        if (visibleCount === 0) {
+            // Dodaj no-results poruku, ali NE briši pesme
+            const noResultsHTML = `
+                <div class="no-results">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                    <div>No results found for "${query}"</div>
+                    <button class="show-all-btn" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Show All Songs
+                    </button>
+                </div>
+            `;
+            songGrid.insertAdjacentHTML('beforeend', noResultsHTML);
 
-		return allSongs.filter(songTile => {
-			const title = songTile.getAttribute('data-title').toLowerCase();
-			const artist = songTile.getAttribute('data-artist').toLowerCase();
-			const genre = songTile.getAttribute('data-genre').toLowerCase();
+            // Dodaj event listener za dugme
+            const showAllBtn = songGrid.querySelector('.show-all-btn');
+            if (showAllBtn) {
+                showAllBtn.addEventListener('click', function() {
+                    searchInput.value = '';
+                    // Pokreni input event da prikaže sve pesme
+                    const event = new Event('input');
+                    searchInput.dispatchEvent(event);
+                });
+            }
+        }
 
-			return title.includes(queryLower) ||
-				artist.includes(queryLower) ||
-				genre.includes(queryLower);
-		});
-	}
+        if (pageTitle) pageTitle.textContent = `Search Results for "${query}"`;
+        if (searchInfo) {
+            searchInfo.textContent = `Found ${visibleCount} result(s)`;
+            searchInfo.style.display = 'block';
+        }
+    });
 
-	function displaySearchResults(results, query) {
-		const allSongs = document.querySelectorAll('.song-tile');
-		allSongs.forEach(song => song.style.display = 'none');
-
-		results.forEach(songTile => {
-			songTile.style.display = 'flex';
-		});
-
-		pageTitle.textContent = `Search Results for "${query}"`;
-		searchInfo.textContent = `Found ${results.length} result(s)`;
-		searchInfo.style.display = 'block';
-	}
-
-	function displayNoResults(query) {
-		const allSongs = document.querySelectorAll('.song-tile');
-		allSongs.forEach(song => song.style.display = 'none');
-
-		songGrid.innerHTML = `
-            <div class="no-results">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
-                <div>No results found for "${query}"</div>
-                <div style="margin-top: 0.5rem; font-size: 0.9rem;">Try different keywords or browse all tracks</div>
-            </div>
-        `;
-
-		pageTitle.textContent = `Search Results for "${query}"`;
-		searchInfo.style.display = 'none';
-	}
-
-	function showAllSongs() {
-		const allSongs = document.querySelectorAll('.song-tile');
-		allSongs.forEach(song => song.style.display = 'flex');
-
-		pageTitle.textContent = 'Featured Tracks';
-		searchInfo.style.display = 'none';
-	}
-
-	document.addEventListener('keydown', function(e) {
-		if (e.key === 'Escape') {
-			searchInput.value = '';
-			showAllSongs();
-		}
-	});
+    // Escape taster za čišćenje
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            searchInput.value = '';
+            const event = new Event('input');
+            searchInput.dispatchEvent(event);
+        }
+    });
 }
 
 function initializeArtistFollow() {
