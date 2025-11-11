@@ -41,7 +41,7 @@
     </variable>
     
     <title>
-        <band height="120" splitType="Stretch">
+        <band height="110" splitType="Stretch">
             <staticText>
                 <reportElement x="0" y="0" width="555" height="30" uuid="d8b21c2a-cc7f-40ed-82b9-0329d3b49c10"/>
                 <textElement textAlignment="Center">
