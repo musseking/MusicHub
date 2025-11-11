@@ -31,11 +31,11 @@ public class SecurityConfig {
 				.requestMatchers("/", "/index", "/login", "/static/**", "/css/**", "/js/**", "/images/**", "/music/**",
 						"/WEB-INF/jsp/**").permitAll()
 				.requestMatchers("/reports/admin/**").hasRole("ADMIN")
-				.requestMatchers("/reports/artist/**").hasRole("ARTIST")
+				.requestMatchers("/reports/artist/**").hasAnyRole("ARTIST", "ADMIN")
 				.requestMatchers("/reports/**").authenticated()
 				.requestMatchers("/download/**", "/users", "/users/**").authenticated()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
-				.requestMatchers("/artist/**").hasRole("ARTIST")
+				.requestMatchers("/artist/**").hasAnyRole("ARTIST", "ADMIN")
 				.requestMatchers("/admin/register-user").hasRole("ADMIN")
 				.requestMatchers("/register", "/admin/register-artist").permitAll().anyRequest().permitAll())
 				.formLogin(form -> form.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/", true)
