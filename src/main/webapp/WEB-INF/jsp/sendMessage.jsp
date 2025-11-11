@@ -1,220 +1,70 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
-    <title>${title}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
-        }
-        
-        header {
-            background: rgba(240, 240, 240, 0.98);
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            color: #222;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .message-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .recipient-info {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            border-left: 4px solid #4CAF50;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            color: white;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        
-        textarea {
-            height: 200px;
-            resize: vertical;
-        }
-        
-        input:focus, textarea:focus {
-            outline: none;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .send-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            flex: 1;
-            transition: all 0.3s ease;
-        }
-        
-        .send-btn:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-        }
-        
-        .cancel-btn {
-            background: #747d8c;
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            text-decoration: none;
-            text-align: center;
-            flex: 1;
-            transition: all 0.3s ease;
-        }
-        
-        .cancel-btn:hover {
-            background: #57606f;
-            transform: translateY(-2px);
-        }
-        
-        .success-message {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4CAF50;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            text-align: center;
-            border: 1px solid rgba(76, 175, 80, 0.5);
-        }
-        
-        .error-message {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            text-align: center;
-            border: 1px solid rgba(255, 107, 107, 0.5);
-        }
-        
-        .back-link {
-            display: inline-block;
-            color: #222;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            margin-right: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .back-link:hover {
-            background: rgba(255, 255, 255, 1);
-            transform: translateY(-1px);
-        }
-    </style>
+<title>${title}</title>
+<link rel="stylesheet" href="./css/sendMessage.css">
+
 </head>
 <body>
-    <header>
-        <h1>🎧 MusicHub</h1>
-        <div>
-            <a href="/" class="back-link">← Back to Site</a>
-            <form action="/logout" method="post" style="display: inline;">
-                <button type="submit" style="background: #ff4757; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: bold;">Logout</button>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            </form>
-        </div>
-    </header>
+	<header>
+		<h1>🎧 MusicHub</h1>
+		<div>
+			<a href="/" class="back-link">← Back to Site</a>
+			<form action="/logout" method="post" style="display: inline;">
+				<button type="submit"
+					style="background: #ff4757; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: bold;">Logout</button>
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" />
+			</form>
+		</div>
+	</header>
 
-    <main class="message-container">
-        <h2>💌 Send Message</h2>
+	<main class="message-container">
+		<h2>💌 Send Message</h2>
 
-        <c:if test="${param.success != null}">
-            <div class="success-message">
-                ✅ Message sent successfully!
-                <div style="margin-top: 0.5rem;">
-                    <a href="/send-message?artistId=${param.artistId}&artistName=${param.artistName}" style="color: #4CAF50; font-weight: bold;">Send another message</a>
-                    or
-                    <a href="/" style="color: #4CAF50; font-weight: bold;">return to site</a>
-                </div>
-            </div>
-        </c:if>
+		<c:if test="${param.success != null}">
+			<div class="success-message">
+				✅ Message sent successfully!
+				<div style="margin-top: 0.5rem;">
+					<a
+						href="/send-message?artistId=${param.artistId}&artistName=${param.artistName}"
+						style="color: #4CAF50; font-weight: bold;">Send another
+						message</a> or <a href="/" style="color: #4CAF50; font-weight: bold;">return
+						to site</a>
+				</div>
+			</div>
+		</c:if>
 
-        <c:if test="${not empty error}">
-            <div class="error-message">
-                ❌ ${error}
-            </div>
-        </c:if>
+		<c:if test="${not empty error}">
+			<div class="error-message">❌ ${error}</div>
+		</c:if>
 
-        <div class="recipient-info">
-            <strong>To:</strong> ${artistName}
-        </div>
+		<div class="recipient-info">
+			<strong>To:</strong> ${artistName}
+		</div>
 
-        <form action="/send-message" method="post">
-            <input type="hidden" name="artistId" value="${artistId}">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            
-            <div class="form-group">
-                <label for="subject">Subject</label>
-                <input type="text" id="subject" name="subject" value="${subject}" 
-                       placeholder="Enter message subject" required>
-            </div>
+		<form action="/send-message" method="post">
+			<input type="hidden" name="artistId" value="${artistId}"> <input
+				type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 
-            <div class="form-group">
-                <label for="content">Message</label>
-                <textarea id="content" name="content" placeholder="Write your message here..." 
-                         required>${content}</textarea>
-            </div>
+			<div class="form-group">
+				<label for="subject">Subject</label> <input type="text" id="subject"
+					name="subject" value="${subject}"
+					placeholder="Enter message subject" required>
+			</div>
 
-            <div class="btn-group">
-                <a href="/" class="cancel-btn">Cancel</a>
-                <button type="submit" class="send-btn">Send Message</button>
-            </div>
-        </form>
-    </main>
+			<div class="form-group">
+				<label for="content">Message</label>
+				<textarea id="content" name="content"
+					placeholder="Write your message here..." required>${content}</textarea>
+			</div>
+
+			<div class="btn-group">
+				<a href="/" class="cancel-btn">Cancel</a>
+				<button type="submit" class="send-btn">Send Message</button>
+			</div>
+		</form>
+	</main>
 </body>
 </html>
