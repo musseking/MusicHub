@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports 
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
+              name="songs_ranking_report" pageWidth="595" pageHeight="842" 
+              columnWidth="555" leftMargin="20" rightMargin="20" 
+              topMargin="20" bottomMargin="20" uuid="b1c2d3e4-f5g6-7890-hijk-l12345678901">
+    
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    
+    <subDataset name="SongsRankingDataset" uuid="a1b2c3d4-e5f6-7890-abcd-ef1234567890">
+        <field name="rank" class="java.lang.Integer"/>
+        <field name="title" class="java.lang.String"/>
+        <field name="artist" class="java.lang.String"/>
+        <field name="genre" class="java.lang.String"/>
+        <field name="averageRating" class="java.lang.Double"/>
+        <field name="ratingCount" class="java.lang.Long"/>
+    </subDataset>
+    
+    <parameter name="reportTitle" class="java.lang.String"/>
+    <parameter name="totalSongs" class="java.lang.Integer"/>
+    
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    
+    <field name="id" class="java.lang.Long"/>
+    <field name="title" class="java.lang.String"/>
+    <field name="artist" class="java.lang.String"/>
+    <field name="genre" class="java.lang.String"/>
+    <field name="averageRating" class="java.lang.Double"/>
+    <field name="ratingCount" class="java.lang.Long"/>
+    <field name="rank" class="java.lang.Integer"/>
+    
+    <variable name="songCounter" class="java.lang.Integer" resetType="Report" calculation="Count">
+        <variableExpression><![CDATA[$F{id}]]></variableExpression>
+    </variable>
+    
+    <title>
+        <band height="100" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30" uuid="c2d3e4f5-g6h7-8901-ijkl-m23456789012"/>
+                <textElement textAlignment="Center">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <text><![CDATA[MusicHub - Songs Ranking]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="30" width="555" height="20" uuid="d3e4f5g6-h7i8-9012-jklm-n34567890123"/>
+                <textElement textAlignment="Center">
+                    <font size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="0" y="55" width="555" height="1" uuid="e4f5g6h7-i8j9-0123-klmn-o45678901234"/>
+                <graphicElement>
+                    <pen lineWidth="1.0"/>
+                </graphicElement>
+            </line>
+            <staticText>
+                <reportElement x="0" y="65" width="180" height="20" uuid="f5g6h7i8-j9k0-1234-lmno-p56789012345"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Generated on:]]></text>
+            </staticText>
+            <textField pattern="dd.MM.yyyy HH:mm">
+                <reportElement x="180" y="65" width="200" height="20" uuid="g6h7i8j9-k0l1-2345-mnop-q67890123456"/>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="85" width="180" height="20" uuid="h7i8j9k0-l1m2-3456-nopq-r78901234567"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total Songs:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="180" y="85" width="50" height="20" uuid="i8j9k0l1-m2n3-4567-opqr-s89012345678"/>
+                <textFieldExpression><![CDATA[$P{totalSongs}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <columnHeader>
+        <band height="30" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="40" height="30" backcolor="#FFA502" forecolor="#FFFFFF" uuid="j9k0l1m2-n3o4-5678-pqrs-t90123456789"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Rank]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="40" y="0" width="150" height="30" backcolor="#FFA502" forecolor="#FFFFFF" uuid="k0l1m2n3-o4p5-6789-qrst-u01234567890"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Title]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="190" y="0" width="120" height="30" backcolor="#FFA502" forecolor="#FFFFFF" uuid="l1m2n3o4-p5q6-7890-rstu-v12345678901"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Artist]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="310" y="0" width="80" height="30" backcolor="#FFA502" forecolor="#FFFFFF" uuid="m2n3o4p5-q6r7-8901-stuv-w23456789012"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Genre]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="390" y="0" width="60" height="30" backcolor="#FFA502" forecolor="#FFFFFF" uuid="n3o4p5q6-r7s8-9012-tuvw-x34567890123"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Rating]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="450" y="0" width="105" height="30" backcolor="#FFA502" forecolor="#FFFFFF" uuid="o4p5q6r7-s8t9-0123-uvwx-y45678901234"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Votes]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="25" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="40" height="25" uuid="p5q6r7s8-t9u0-1234-vwxy-z56789012345"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{rank}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="40" y="0" width="150" height="25" uuid="q6r7s8t9-u0v1-2345-wxyz-a67890123456"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="190" y="0" width="120" height="25" uuid="r7s8t9u0-v1w2-3456-xyza-b78901234567"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{artist}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="310" y="0" width="80" height="25" uuid="s8t9u0v1-w2x3-4567-yzab-c89012345678"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{genre} != null ? $F{genre} : "Unknown"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="390" y="0" width="60" height="25" uuid="t9u0v1w2-x3y4-5678-zabc-d90123456789"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{averageRating} != null ? String.format("%.1f", $F{averageRating}) : "0.0"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="450" y="0" width="105" height="25" uuid="u0v1w2x3-y4z5-6789-abcd-e01234567890"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{ratingCount} != null ? $F{ratingCount} : 0]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    
+    <pageFooter>
+        <band height="30" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="555" height="20" uuid="v1w2x3y4-z5a6-7890-bcde-f12345678901"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isItalic="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_COUNT}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+    
+    <summary>
+        <band height="40" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="10" width="180" height="20" uuid="w2x3y4z5-a6b7-8901-cdef-g23456789012"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total Songs in Report:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="180" y="10" width="50" height="20" uuid="x3y4z5a6-b7c8-9012-defg-h34567890123"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{songCounter}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport>

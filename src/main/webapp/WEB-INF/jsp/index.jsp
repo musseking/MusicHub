@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <html>
 <head>
 <title>MusicHub - Share & Discover Music</title>
@@ -25,8 +25,22 @@
 						<div class="user-role-badge ${loggedUserRole.toLowerCase()}">
 							${loggedDisplayRole}</div>
 					</div>
+
+					<!-- REPORTS DROPDOWN -->
+					<div class="reports-dropdown">
+						<a href="/reports/song-ratings" class="report-link">🏆</a>
+
+						<c:if test="${isAdmin}">
+							<hr style="margin: 5px 0; border-color: #ccc;">
+							<a href="/reports/admin/users" class="report-link admin">📊
+								Izveštaj korisnika</a>
+							<a href="/reports/admin/song-ratings" class="report-link admin">📈
+								Kompletan izveštaj ocena</a>
+						</c:if>
+					</div>
+
 					<a href="/messages" class="show-users-btn"
-						style="margin-right: 0.5rem;"> 📨 Messages <c:if
+						style="margin-right: 0.5rem;">📨<c:if
 							test="${unreadCount > 0}">
 							<span
 								style="background: #ff4757; color: white; border-radius: 50%; padding: 0.2rem 0.5rem; font-size: 0.7rem; margin-left: 0.3rem;">
@@ -35,7 +49,7 @@
 					</a>
 
 					<div class="admin-buttons">
-						<a href="/users" class="show-users-btn"> 👥 Show All Users </a>
+						<a href="/users" class="show-users-btn">👥</a>
 						<form action="/logout" method="post"
 							style="display: inline; margin: 0;">
 							<button type="submit" class="logout-btn">Logout</button>
@@ -94,7 +108,8 @@
 									style="display: none;">
 									<button class="follow-btn" data-artist-id="${song.artist.id}">Follow</button>
 									<button class="message-btn" data-artist-id="${song.artist.id}"
-										data-artist-name="${fn:escapeXml(song.artist.fullName)}">💌 Message</button>
+										data-artist-name="${fn:escapeXml(song.artist.fullName)}">💌
+										Message</button>
 								</div>
 							</div>
 						</div>
@@ -116,18 +131,20 @@
 
 						<!-- Rating Section -->
 						<div class="rating-section">
-						    <div class="rating-stars" data-song-id="${song.id}">
-						        <span class="star" data-rating="1" title="1 star - Poor">★</span>
-						        <span class="star" data-rating="2" title="2 stars - Fair">★</span>
-						        <span class="star" data-rating="3" title="3 stars - Good">★</span>
-						        <span class="star" data-rating="4" title="4 stars - Very Good">★</span>
-						        <span class="star" data-rating="5" title="5 stars - Excellent">★</span>
-						    </div>
-						    <div class="rating-info">
-						        <span class="average-rating">Not rated yet</span>
-						        <span class="rating-count">(0 ratings)</span>
-						        <span class="user-rating-badge" style="display: none;">Your rating: <span class="user-rating-value">0</span></span>
-						    </div>
+							<div class="rating-stars" data-song-id="${song.id}">
+								<span class="star" data-rating="1" title="1 star - Poor">★</span>
+								<span class="star" data-rating="2" title="2 stars - Fair">★</span>
+								<span class="star" data-rating="3" title="3 stars - Good">★</span>
+								<span class="star" data-rating="4" title="4 stars - Very Good">★</span>
+								<span class="star" data-rating="5" title="5 stars - Excellent">★</span>
+							</div>
+							<div class="rating-info">
+								<span class="average-rating">Not rated yet</span> <span
+									class="rating-count">(0 ratings)</span> <span
+									class="user-rating-badge" style="display: none;">Your
+									rating: <span class="user-rating-value">0</span>
+								</span>
+							</div>
 						</div>
 
 						<div class="download-section">
@@ -799,7 +816,7 @@
                 return;
             }
             
-            // Preusmeri na stranicu za slanje poruke sa artist ID i imenom kao parametrima
+            // Preusmeri na stranice za slanje poruke sa artist ID i imenom kao parametrima
             window.location.href = '/send-message?artistId=' + artistId + '&artistName=' + encodeURIComponent(artistName);
         }
         
