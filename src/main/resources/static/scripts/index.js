@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== INITIALIZING AUDIO PLAYER ===');
 
     window.audioUnlocked = false;
     
@@ -285,7 +284,6 @@ function initializeAudioPlayers() {
         }
 
         function pauseAudio() {
-            console.log('⏸️ Pausing audio for song:', songId);
             if (globalAudio && currentPlayer === player) {
                 globalAudio.pause();
                 stopProgressUpdate();
@@ -391,7 +389,6 @@ function initializeAudioPlayers() {
 }
 
 function initializeDownloadButtons() {
-    console.log('=== INITIALIZING DOWNLOAD BUTTONS ===');
 
     const downloadLinks = document.querySelectorAll('.download-link');
     console.log('Found download links:', downloadLinks.length);
@@ -499,7 +496,6 @@ function initializeSearch() {
 }
 
 function initializeArtistFollow() {
-    console.log('=== INITIALIZING ARTIST FOLLOW FUNCTIONALITY ===');
 
     const artistNames = document.querySelectorAll('.artist-name');
     console.log('Found artist names:', artistNames.length);
@@ -610,7 +606,7 @@ function initializeArtistFollow() {
     }
 
     function showLoginPrompt() {
-        alert('Please login to follow artists!');
+        alert('Please login first!');
     }
 
     artistNames.forEach(artistName => {
@@ -703,7 +699,6 @@ function initializeArtistFollow() {
 }
 
 function initializeSongRatings() {
-    console.log('=== INITIALIZING SONG RATINGS ===');
 
     const ratingContainers = document.querySelectorAll('.rating-stars');
     console.log('Found rating containers:', ratingContainers.length);
