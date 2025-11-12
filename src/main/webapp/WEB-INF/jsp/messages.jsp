@@ -9,7 +9,7 @@
 </head>
 <body>
 	<header>
-		<h1>🎧 MusicHub</h1>
+		<h1>MusicHub</h1>
 		<div>
 			<a href="/" class="back-link">← Back to Site</a>
 			<form action="/logout" method="post" style="display: inline;">

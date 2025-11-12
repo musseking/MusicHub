@@ -28,7 +28,6 @@ public class SongController {
         this.songService = songService;
     }
 
-    // JAVNA RUTA - SVI MOGU DA VIDELISTU PESAMA
     @GetMapping("/songs")
     public String listSongs(Model model) {
         model.addAttribute("songs", songService.getAllSongs());
@@ -36,10 +35,8 @@ public class SongController {
         return "songs";
     }
 
-    // JAVNA RUTA - SVI MOGU DA VIDEDETALJE O PESMI
     @GetMapping("/songs/{id}")
     public String songDetails(@PathVariable Long id, Model model) {
-        // Dohvati pesmu i dodaj je u model
         List<Song> allSongs = songService.getAllSongs();
         Song song = null;
         
@@ -60,14 +57,12 @@ public class SongController {
         return "song-details";
     }
 
-    // NOVO: PREVIEW ENDPOINT - vraća samo prvih 60 sekundi pesme
     @GetMapping("/preview/{id}")
     @ResponseBody
     public ResponseEntity<Resource> songPreview(@PathVariable Long id) {
         System.out.println("🎵 PREVIEW ENDPOINT CALLED FOR SONG ID: " + id);
         
         try {
-            // Dohvati pesmu
             List<Song> allSongs = songService.getAllSongs();
             Song song = null;
             
@@ -85,7 +80,6 @@ public class SongController {
             
             System.out.println("✅ PREVIEW SONG: " + song.getTitle());
             
-            // Pronađi fajl
             File audioFile = findAudioFile(song.getFilePath());
             
             if (audioFile == null || !audioFile.exists()) {
@@ -95,13 +89,12 @@ public class SongController {
 
             System.out.println("✅ PREVIEW FILE FOUND: " + audioFile.getAbsolutePath());
             
-            // Za preview, uvek vraćamo samo prvih 60 sekundi
             Resource resource = new FileSystemResource(audioFile);
             
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, "audio/wav")
                     .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(audioFile.length()))
-                    .header("X-Preview-Limit", "60") // Informacija za frontend
+                    .header("X-Preview-Limit", "60")
                     .body(resource);
                     
         } catch (Exception e) {
@@ -111,20 +104,17 @@ public class SongController {
         }
     }
 
-    // ZAŠTIĆENA RUTA - DOWNLOAD (samo logovani) - KORISTI @ResponseBody!
     @GetMapping("/download/{id}")
     @ResponseBody
     public ResponseEntity<Resource> downloadSong(@PathVariable Long id, Authentication authentication) {
         System.out.println("🎵🎵🎵 DOWNLOAD ENDPOINT HIT FOR SONG ID: " + id + " 🎵🎵🎵");
         
-        // Provera autentifikacije
         if (authentication == null || !authentication.isAuthenticated()) {
             System.out.println("❌ DOWNLOAD DENIED: USER NOT AUTHENTICATED");
             return ResponseEntity.status(401).build();
         }
 
         try {
-            // Dohvati pesmu
             List<Song> allSongs = songService.getAllSongs();
             Song song = null;
             
@@ -145,19 +135,16 @@ public class SongController {
             System.out.println("✅ FILE PATH: " + song.getFilePath());
             System.out.println("✅ ALLOW DOWNLOAD: " + song.getAllowDownload());
             
-            // Proveri da li je download dozvoljen
             if (!song.getAllowDownload()) {
                 System.out.println("❌ DOWNLOAD DENIED: SONG DOES NOT ALLOW DOWNLOAD");
                 return ResponseEntity.badRequest().build();
             }
 
-            // Kreiraj pravilno ime fajla: "Izvođač - Pesma.wav"
             String fileName = generateFileName(song);
             System.out.println("🎵 DOWNLOAD FILENAME: " + fileName);
 
             System.out.println("🎵 DOWNLOAD APPROVED FOR: " + song.getTitle());
             
-            // Pronađi fajl
             File audioFile = findAudioFile(song.getFilePath());
             
             if (audioFile == null || !audioFile.exists()) {
@@ -170,7 +157,6 @@ public class SongController {
 
             Resource resource = new FileSystemResource(audioFile);
             
-            // Kreiraj response za download sa pravim imenom fajla
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, 
                            "attachment; filename=\"" + fileName + "\"")
@@ -185,23 +171,17 @@ public class SongController {
         }
     }
     
-    // Metoda za generisanje imena fajla u formatu "Izvođač - Pesma.wav"
     private String generateFileName(Song song) {
         String artistName = song.getArtist().getFullName();
         String songTitle = song.getTitle();
-        
-        // Čišćenje specijalnih karaktera koji mogu uzrokovati probleme u imenima fajlova
         String cleanArtist = cleanFileName(artistName);
         String cleanTitle = cleanFileName(songTitle);
         
         return cleanArtist + " - " + cleanTitle + ".wav";
     }
     
-    // Pomoćna metoda za čišćenje nedozvoljenih karaktera u imenima fajlova
     private String cleanFileName(String fileName) {
         if (fileName == null) return "";
-        
-        // Ukloni karaktere koji nisu dozvoljeni u imenima fajlova
         return fileName.replaceAll("[\\\\/:*?\"<>|]", "_")
                       .replaceAll("\\s+", " ")
                       .trim();
@@ -209,11 +189,10 @@ public class SongController {
     
     private File findAudioFile(String filePath) {
         System.out.println("🔍 SEARCHING FOR FILE: " + filePath);
-        
-        // Lista mogućih lokacija
+
         String[] possiblePaths = {
-            filePath, // original path
-            filePath.startsWith("/") ? filePath.substring(1) : filePath, // bez početnog /
+            filePath,
+            filePath.startsWith("/") ? filePath.substring(1) : filePath,
             "src/main/webapp" + filePath,
             "src/main/resources" + filePath,
             "target/classes/static" + filePath,
@@ -234,7 +213,6 @@ public class SongController {
         return null;
     }
 
-    // TEST METODA - provera da li controller radi
     @GetMapping("/test-download")
     @ResponseBody
     public String testDownload() {
@@ -242,7 +220,6 @@ public class SongController {
         return "🎵 Download endpoint is working! SongController is registered!";
     }
     
-    // TEST METODA za preview
     @GetMapping("/test-preview")
     @ResponseBody
     public String testPreview() {
@@ -273,7 +250,6 @@ public class SongController {
             System.out.println("✅ Song found: " + song.getTitle());
             System.out.println("✅ File path: " + song.getFilePath());
             
-            // Proveri da li fajl postoji
             File audioFile = findAudioFile(song.getFilePath());
             if (audioFile == null || !audioFile.exists()) {
                 return ResponseEntity.status(404).body("❌ Audio file not found at: " + song.getFilePath());

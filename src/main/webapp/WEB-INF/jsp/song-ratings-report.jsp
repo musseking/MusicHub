@@ -9,7 +9,7 @@
 </head>
 <body>
 	<header>
-		<h1>🎧 MusicHub</h1>
+		<h1>MusicHub</h1>
 		<div class="user-display">
 			<div class="user-info-container">
 				<div class="username">${displayName}</div>
@@ -26,7 +26,6 @@
 			<p>View detailed ratings and download comprehensive PDF reports</p>
 		</div>
 
-		<!-- Song Ratings Display Section -->
 		<div class="reports-section">
 			<h2 class="section-title">
 				🎵
@@ -98,12 +97,10 @@
 			</c:choose>
 		</div>
 
-		<!-- PDF Reports Section -->
 		<div class="reports-section">
 			<h2 class="section-title">📈 Comprehensive PDF Reports</h2>
 
 			<div class="reports-grid">
-				<!-- Report for All Users -->
 				<div class="report-card">
 					<div class="report-icon">🏆</div>
 					<div class="report-card-title">Songs Ranking</div>
@@ -114,7 +111,6 @@
 						target="_blank"> 📥 Download PDF </a>
 				</div>
 
-				<!-- Report for Artists -->
 				<c:if test="${loggedUserRole == 'ARTIST' || isAdmin}">
 					<div class="report-card">
 						<div class="artist-badge">FOR ARTISTS</div>
@@ -128,7 +124,6 @@
 					</div>
 				</c:if>
 
-				<!-- Admin Reports -->
 				<c:if test="${isAdmin}">
 					<div class="report-card">
 						<div class="admin-badge">ADMIN ONLY</div>
@@ -155,7 +150,6 @@
 			</div>
 		</div>
 
-		<!-- Info Section -->
 		<div
 			style="text-align: center; color: #ccc; margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.1); border-radius: 10px;">
 			<p>
@@ -168,7 +162,6 @@
 	</main>
 
 	<script>
-        // Add loading effects to download buttons
         document.addEventListener('DOMContentLoaded', function() {
             const downloadButtons = document.querySelectorAll('.download-btn');
             
@@ -179,7 +172,6 @@
                     this.style.opacity = '0.7';
                     this.style.cursor = 'wait';
                     
-                    // Reset after 3 seconds if nothing happens
                     setTimeout(() => {
                         this.innerHTML = originalText;
                         this.style.opacity = '1';

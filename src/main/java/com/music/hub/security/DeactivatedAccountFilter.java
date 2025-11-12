@@ -23,24 +23,20 @@ public class DeactivatedAccountFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, 
                                   FilterChain filterChain) throws ServletException, IOException {
         
-        // Proveravamo samo POST zahteve na /login
         if ("/login".equals(request.getServletPath()) && "POST".equalsIgnoreCase(request.getMethod())) {
             String username = request.getParameter("username");
             
             if (username != null && !username.trim().isEmpty()) {
-                // Proverimo da li korisnik postoji i da li je deaktiviran
                 var userOpt = userRepository.findByUsername(username);
                 if (userOpt.isPresent() && !userOpt.get().getIsActive()) {
-                    // Korisnik je deaktiviran - preusmeri sa custom porukom
                     request.getSession().setAttribute("LOGIN_ERROR_MESSAGE", 
                         "Sorry, your account is temporarily deactivated, contact admin for help");
                     response.sendRedirect("/login?error=true");
-                    return; // NE NASTAVLJAJ FILTER CHAIN
+                    return;
                 }
             }
         }
         
-        // Nastavi normalno ako nije deaktivirani korisnik
         filterChain.doFilter(request, response);
     }
 }

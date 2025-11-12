@@ -61,7 +61,7 @@ public class SongService {
         }
     }
 
-    // NOVA METODA ZA PREVIEW
+
     public ResponseEntity<Resource> previewSong(Long songId) {
         try {
             Song song = repo.findById(songId)
@@ -101,16 +101,14 @@ public class SongService {
     private File findAudioFile(String filePath) {
         System.out.println("🔍 SEARCHING FOR FILE: " + filePath);
         
-        // Proveri originalnu putanju
         File file = new File(filePath);
         if (file.exists()) {
             System.out.println("✅ FILE FOUND AT ORIGINAL PATH: " + filePath);
             return file;
         }
         
-        // Ako nije pronađen, probaj različite lokacije
         String[] possiblePaths = {
-            filePath.startsWith("/") ? filePath.substring(1) : filePath, // bez početnog /
+            filePath.startsWith("/") ? filePath.substring(1) : filePath,
             "src/main/webapp" + filePath,
             "src/main/resources" + filePath,
             "target/classes/static" + filePath,
@@ -130,7 +128,7 @@ public class SongService {
         }
         
         System.out.println("❌ FILE NOT FOUND AT ANY LOCATION");
-        return new File(""); // vrati prazan fajl
+        return new File("");
     }
     
     private String getFileName(String filePath) {
@@ -139,7 +137,6 @@ public class SongService {
         return lastSlash >= 0 ? filePath.substring(lastSlash + 1) : filePath;
     }
 
-    // TEST METODA
     public String testAudioFile(Long songId) {
         try {
             Song song = repo.findById(songId)

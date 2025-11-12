@@ -9,7 +9,7 @@
 <body>
 	<div class="login-container">
 		<div class="login-header">
-			<h1>🎧 MusicHub</h1>
+			<h1>MusicHub</h1>
 			<p>DJ Portal Access</p>
 		</div>
 

@@ -31,11 +31,3 @@ logging:
     org.springframework.security: DEBUG
 server:
   port: 8080
-
-## Resource server (JWT) – privremeno za razvoj može i opaque/bearer stub
-#spring:
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          jwk-set-uri: http://localhost:8080/dev-jwks  # privremeno stub ili pravi IdP

@@ -18,10 +18,8 @@ public class AdminController {
 		this.userService = userService;
 	}
 
-	// Prikaz svih korisnika - sada dostupan svim ulogovanim korisnicima
 	@GetMapping("/users")
 	public String showAllUsers(Model model, Authentication authentication) {
-		// Proveri da li je korisnik ulogovan
 		if (authentication == null || !authentication.isAuthenticated()) {
 			return "redirect:/login";
 		}
@@ -32,8 +30,6 @@ public class AdminController {
 		model.addAttribute("totalUsers", users.size());
 		model.addAttribute("totalArtists", userService.getAllArtists().size());
 		model.addAttribute("totalRegularUsers", userService.getAllRegularUsers().size());
-		
-		// Dodaj informaciju da li je admin
 		model.addAttribute("isAdmin", isAdmin(authentication));
 
 		return "users";
@@ -49,7 +45,6 @@ public class AdminController {
 		return "register-user";
 	}
 
-	// Obrada dodavanja korisnika (sada podržava i artiste i obične usere)
 	@PostMapping("/admin/register-user")
 	public String registerUser(@RequestParam String username, @RequestParam String email, @RequestParam String password,
 			@RequestParam String firstName, @RequestParam String lastName, @RequestParam String userType, 
@@ -63,7 +58,6 @@ public class AdminController {
 			boolean isArtist = "ARTIST".equals(userType);
 			var user = userService.registerUser(username, email, password, firstName, lastName, isArtist);
 			
-			// Ako je artist i postoji bio, postavi ga
 			if (isArtist && bio != null && !bio.trim().isEmpty()) {
 				user.setBio(bio);
 				userService.updateUserBio(user.getId(), bio);
@@ -81,7 +75,6 @@ public class AdminController {
 		}
 	}
 
-	// Deaktiviraj korisnika - samo admin
 	@PostMapping("/admin/users/{id}/deactivate")
 	public String deactivateUser(@PathVariable Long id, Authentication authentication) {
 		if (!isAdmin(authentication)) {
@@ -92,7 +85,6 @@ public class AdminController {
 		return "redirect:/users?deactivated=true";
 	}
 
-	// Aktiviraj korisnika - samo admin
 	@PostMapping("/admin/users/{id}/activate")
 	public String activateUser(@PathVariable Long id, Authentication authentication) {
 		if (!isAdmin(authentication)) {
@@ -103,7 +95,6 @@ public class AdminController {
 		return "redirect:/users?activated=true";
 	}
 
-	// Pomocna metoda za proveru admin role
 	private boolean isAdmin(Authentication authentication) {
 		if (authentication == null || !authentication.isAuthenticated()) {
 			return false;

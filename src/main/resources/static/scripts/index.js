@@ -1,11 +1,8 @@
-// POBOLJŠANI AUDIO PLAYER SA DIREKTNIM TESTIRANJEM ENDPOINTA
 document.addEventListener('DOMContentLoaded', function() {
 	console.log('=== INITIALIZING AUDIO PLAYER WITH ENDPOINT TESTING ===');
 
-	// Global audio state
 	window.audioUnlocked = false;
 
-	// Unlock audio na bilo koji user interaction
 	document.addEventListener('click', function() {
 		if (!window.audioUnlocked) {
 			console.log('🔓 Audio unlocked by user interaction');
@@ -24,7 +21,6 @@ function initializeAudioPlayers() {
 	const audioPlayers = document.querySelectorAll('.audio-player');
 	console.log('Found audio players:', audioPlayers.length);
 
-	// Globalni audio element za sve playere
 	let globalAudio = null;
 	let currentPlayer = null;
 	let isSeeking = false;
@@ -43,7 +39,6 @@ function initializeAudioPlayers() {
 
 		console.log(`Setting up player ${index} for song ${songId}`);
 
-		// Format time function
 		function formatTime(seconds) {
 			if (isNaN(seconds)) return '0:00';
 			const mins = Math.floor(seconds / 60);
@@ -58,7 +53,6 @@ function initializeAudioPlayers() {
 			messageDiv.innerHTML = message;
 			player.appendChild(messageDiv);
 
-			// Automatski ukloni poruku nakon 5 sekundi
 			setTimeout(() => {
 				if (messageDiv.parentNode === player) {
 					messageDiv.remove();
@@ -75,7 +69,6 @@ function initializeAudioPlayers() {
 			showInfoMessage('🎧 Preview limited to 60 seconds - <a href="/login" style="color: #4CAF50; font-weight: bold;">Login for full access</a>', true);
 		}
 
-		// Testiraj audio endpoint
 		function testAudioEndpoint(songId) {
 			return new Promise((resolve) => {
 				const audioSource = isLoggedIn ? `/stream/${songId}` : `/preview/${songId}`;
@@ -98,27 +91,23 @@ function initializeAudioPlayers() {
 			});
 		}
 
-		// Play funkcija - POBOLJŠANA SA ENDPOINT TESTING-OM
 		async function playAudio() {
 			console.log('🎵 Attempting to play audio for song:', songId);
 
 			removeMessages();
 
-			// Proveri da li je audio unlocked
 			if (!window.audioUnlocked) {
 				console.log('🔒 Audio not unlocked yet');
 				showInfoMessage('🎧 Click anywhere on the page first, then click play to listen');
 				return;
 			}
 
-			// Testiraj endpoint pre nego što pokušaš da reprodukuješ
 			const endpointWorking = await testAudioEndpoint(songId);
 			if (!endpointWorking) {
 				showInfoMessage('🔇 Audio service temporarily unavailable - please try again later');
 				return;
 			}
 
-			// Zaustavi prethodni audio ako postoji
 			if (globalAudio && currentPlayer !== player) {
 				globalAudio.pause();
 				const prevPlayer = currentPlayer;
@@ -130,7 +119,6 @@ function initializeAudioPlayers() {
 				}
 			}
 
-			// Kreiraj novi audio element ako ne postoji ili ako je drugi player
 			if (!globalAudio || currentPlayer !== player) {
 				globalAudio = new Audio();
 				currentPlayer = player;
@@ -141,11 +129,9 @@ function initializeAudioPlayers() {
 
 				console.log('🎵 Using audio source:', audioSource);
 
-				// Resetuj progress bar
 				progress.style.width = '0%';
 				currentTimeEl.textContent = '0:00';
 
-				// Event listeners za NOVI audio element
 				globalAudio.addEventListener('loadeddata', function() {
 					console.log('✅ Audio loaded successfully for song:', songId);
 				});
@@ -178,14 +164,12 @@ function initializeAudioPlayers() {
 				});
 			}
 
-			// Pokušaj da reprodukuješ audio
 			globalAudio.play()
 				.then(() => {
 					console.log('✅ Audio playing successfully for song:', songId);
 					playIcon.style.display = 'none';
 					pauseIcon.style.display = 'block';
 
-					// Dodaj preview info poruku za nelogovane
 					if (!isLoggedIn) {
 						showInfoMessage('🎧 Listening to 60-second preview - <a href="/login" style="color: #4CAF50; font-weight: bold;">Login for full access</a>');
 					}
@@ -206,7 +190,6 @@ function initializeAudioPlayers() {
 				});
 		}
 
-		// Pause funkcija
 		function pauseAudio() {
 			console.log('⏸️ Pausing audio for song:', songId);
 			if (globalAudio && currentPlayer === player) {
@@ -216,14 +199,12 @@ function initializeAudioPlayers() {
 			}
 		}
 
-		// Update progress
 		function updateProgress() {
 			if (globalAudio && globalAudio.duration && !isSeeking) {
 				const percent = (globalAudio.currentTime / globalAudio.duration) * 100;
 				progress.style.width = percent + '%';
 				currentTimeEl.textContent = formatTime(globalAudio.currentTime);
 
-				// Preview limit za nelogovane
 				if (!isLoggedIn && globalAudio.currentTime >= 60) {
 					globalAudio.pause();
 					playIcon.style.display = 'block';
@@ -233,7 +214,6 @@ function initializeAudioPlayers() {
 			}
 		}
 
-		// Seek funkcija - POBOLJŠANA
 		function seekToPosition(clientX) {
 			if (!globalAudio || !globalAudio.duration) return;
 
@@ -241,7 +221,6 @@ function initializeAudioPlayers() {
 			const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
 			const newTime = percent * globalAudio.duration;
 
-			// Postavi seeking flag
 			isSeeking = true;
 
 			if (!isLoggedIn && newTime > 60) {
@@ -254,17 +233,14 @@ function initializeAudioPlayers() {
 				globalAudio.currentTime = newTime;
 			}
 
-			// Instantly update progress bar
 			progress.style.width = (newTime / globalAudio.duration) * 100 + '%';
 			currentTimeEl.textContent = formatTime(newTime);
 
-			// Reset seeking flag nakon kratkog vremena
 			setTimeout(() => {
 				isSeeking = false;
 			}, 100);
 		}
 
-		// Event listeners
 		playBtn.addEventListener('click', function(e) {
 			e.stopPropagation();
 			console.log('🎵 Play button clicked for song:', songId);
@@ -282,7 +258,6 @@ function initializeAudioPlayers() {
 			}
 		});
 
-		// Inicijalizacija
 		currentTimeEl.textContent = '0:00';
 		const songDuration = parseInt(player.getAttribute('data-duration'));
 		if (songDuration) {
@@ -322,18 +297,15 @@ function initializeSearch() {
     const pageTitle = document.getElementById('pageTitle');
     const searchInfo = document.getElementById('searchInfo');
 
-    // Čuvamo originalne pesme
     const originalSongs = Array.from(songGrid.querySelectorAll('.song-tile'));
 
     searchInput.addEventListener('input', function(e) {
         const query = e.target.value.trim();
 
         if (query.length === 0) {
-            // Prikaži sve pesme
             originalSongs.forEach(song => {
                 song.style.display = 'flex';
             });
-            // Sakrij no-results poruku ako postoji
             const noResults = songGrid.querySelector('.no-results');
             if (noResults) {
                 noResults.remove();
@@ -343,7 +315,6 @@ function initializeSearch() {
             return;
         }
 
-        // Normalna pretraga
         const queryLower = query.toLowerCase();
         let visibleCount = 0;
 
@@ -360,14 +331,12 @@ function initializeSearch() {
             }
         });
 
-        // Ukloni prethodnu no-results poruku
         const existingNoResults = songGrid.querySelector('.no-results');
         if (existingNoResults) {
             existingNoResults.remove();
         }
 
         if (visibleCount === 0) {
-            // Dodaj no-results poruku, ali NE briši pesme
             const noResultsHTML = `
                 <div class="no-results">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
@@ -379,12 +348,10 @@ function initializeSearch() {
             `;
             songGrid.insertAdjacentHTML('beforeend', noResultsHTML);
 
-            // Dodaj event listener za dugme
             const showAllBtn = songGrid.querySelector('.show-all-btn');
             if (showAllBtn) {
                 showAllBtn.addEventListener('click', function() {
                     searchInput.value = '';
-                    // Pokreni input event da prikaže sve pesme
                     const event = new Event('input');
                     searchInput.dispatchEvent(event);
                 });
@@ -398,7 +365,6 @@ function initializeSearch() {
         }
     });
 
-    // Escape taster za čišćenje
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             searchInput.value = '';
@@ -414,10 +380,8 @@ function initializeArtistFollow() {
 	const artistNames = document.querySelectorAll('.artist-name');
 	console.log('Found artist names:', artistNames.length);
 
-	// Globalno praćenje otvorenih dropdown-ova
 	let openDropdown = null;
 
-	// Zatvori sve dropdown-ove
 	function closeAllDropdowns() {
 		document.querySelectorAll('.artist-dropdown').forEach(dropdown => {
 			if (dropdown) {
@@ -427,7 +391,6 @@ function initializeArtistFollow() {
 		openDropdown = null;
 	}
 
-	// Proveri follow status za artist-a
 	async function checkFollowStatus(artistId) {
 		console.log('🎯 checkFollowStatus called with artistId:', artistId, 'Type:', typeof artistId);
 
@@ -437,7 +400,6 @@ function initializeArtistFollow() {
 			return false;
 		}
 
-		// Proveri da li je artistId validan
 		if (!artistId || artistId === 'undefined' || artistId === 'null') {
 			console.error('❌ Invalid artistId:', artistId);
 			return false;
@@ -464,7 +426,6 @@ function initializeArtistFollow() {
 		}
 	}
 
-	// Ažuriraj tekst dugmeta
 	function updateButtonText(button, isFollowing) {
 		if (isFollowing) {
 			button.textContent = 'Unfollow';
@@ -476,7 +437,6 @@ function initializeArtistFollow() {
 		console.log('Button updated:', button.textContent, 'isFollowing:', isFollowing);
 	}
 
-	// Obrada follow/unfollow akcije
 	async function handleFollowAction(artistId, button) {
 		const isLoggedIn = document.body.getAttribute('data-logged-in') === 'true';
 		if (!isLoggedIn) {
@@ -486,8 +446,6 @@ function initializeArtistFollow() {
 
 		const isCurrentlyFollowing = button.classList.contains('unfollow');
 		const action = isCurrentlyFollowing ? 'unfollow' : 'follow';
-
-		// ISPRAVLJENO: Koristi obične stringove umesto template literals
 		const endpoint = '/api/' + action + '/' + artistId;
 
 		console.log('🎯 Performing', action, 'for artist:', artistId, 'Endpoint:', endpoint);
@@ -495,17 +453,15 @@ function initializeArtistFollow() {
 		try {
 			const response = await fetch(endpoint, {
 				method: 'POST',
-				credentials: 'include' // Obavezno za slanje cookie-ja
+				credentials: 'include'
 			});
 
 			console.log('📡 Response status:', response.status);
 
 			if (response.ok) {
-				// Uspješno ažurirano - promeni tekst dugmeta
 				updateButtonText(button, !isCurrentlyFollowing);
 				showFollowMessage(isCurrentlyFollowing ? 'unfollowed' : 'followed');
 
-				// Zatvori dropdown nakon uspešne akcije
 				setTimeout(() => {
 					closeAllDropdowns();
 				}, 1000);
@@ -519,7 +475,6 @@ function initializeArtistFollow() {
 		}
 	}
 
-	// Prikaži poruku o follow akciji
 	function showFollowMessage(action) {
 		const messages = {
 			'followed': '✅ Successfully followed artist!',
@@ -527,16 +482,13 @@ function initializeArtistFollow() {
 			'error': '❌ Error performing action'
 		};
 
-		// Možete dodati notifikaciju ovde ako želite
 		console.log(messages[action]);
 	}
 
-	// Prikaži prompt za login
 	function showLoginPrompt() {
 		alert('Please login to follow artists!');
 	}
 
-	// Event listener za imena autora
 	artistNames.forEach(artistName => {
 		artistName.addEventListener('click', async function(e) {
 			e.stopPropagation();
@@ -552,25 +504,20 @@ function initializeArtistFollow() {
 				return;
 			}
 
-			// Zatvori prethodni dropdown
 			if (openDropdown && openDropdown !== dropdown) {
 				closeAllDropdowns();
 			}
 
-			// Toggle dropdown
 			if (dropdown.style.display === 'block') {
 				dropdown.style.display = 'none';
 				openDropdown = null;
 			} else {
-				// Prikaži dropdown
 				dropdown.style.display = 'block';
 				openDropdown = dropdown;
 
-				// Postavi artist ID na dugme
 				const button = dropdown.querySelector('.follow-btn');
 				button.setAttribute('data-artist-id', artistId);
 
-				// Proveri follow status i ažuriraj dugme
 				const isLoggedIn = document.body.getAttribute('data-logged-in') === 'true';
 				if (isLoggedIn) {
 					try {
@@ -589,21 +536,18 @@ function initializeArtistFollow() {
 		});
 	});
 
-	// Event listener za follow dugmad
 	document.addEventListener('click', function(e) {
 		if (e.target.classList.contains('follow-btn')) {
 			e.stopPropagation();
 			const artistId = e.target.getAttribute('data-artist-id');
 			handleFollowAction(artistId, e.target);
 
-			// Zatvori dropdown nakon akcije
 			setTimeout(() => {
 				closeAllDropdowns();
 			}, 500);
 		}
 	});
 
-	// Event listener za message dugmad
 	document.addEventListener('click', function(e) {
 		if (e.target.classList.contains('message-btn')) {
 			e.stopPropagation();
@@ -613,7 +557,6 @@ function initializeArtistFollow() {
 		}
 	});
 
-	// Funkcija za otvaranje stranice za slanje poruke
 	function openMessagePage(artistId, artistName) {
 		const isLoggedIn = document.body.getAttribute('data-logged-in') === 'true';
 		if (!isLoggedIn) {
@@ -621,16 +564,13 @@ function initializeArtistFollow() {
 			return;
 		}
 
-		// Preusmeri na stranice za slanje poruke sa artist ID i imenom kao parametrima
 		window.location.href = '/send-message?artistId=' + artistId + '&artistName=' + encodeURIComponent(artistName);
 	}
 
-	// Zatvori dropdown kada se klikne bilo gde drugde
 	document.addEventListener('click', function() {
 		closeAllDropdowns();
 	});
 
-	// Spreči zatvaranje dropdown-a kada se klikne unutar njega
 	document.addEventListener('click', function(e) {
 		if (e.target.closest('.artist-dropdown')) {
 			e.stopPropagation();
@@ -644,14 +584,12 @@ function initializeSongRatings() {
 	const ratingContainers = document.querySelectorAll('.rating-stars');
 	console.log('Found rating containers:', ratingContainers.length);
 
-	// Učitaj user ratings i stats za sve pesme
 	ratingContainers.forEach(container => {
 		const songId = container.getAttribute('data-song-id');
 		loadUserRating(songId, container);
 		loadRatingStats(songId, container);
 	});
 
-	// Event listener za zvezdice
 	document.addEventListener('click', function(e) {
 		if (e.target.classList.contains('star')) {
 			const star = e.target;
@@ -669,14 +607,12 @@ function initializeSongRatings() {
 		}
 	});
 
-	// Hover efekat za zvezdice
 	document.addEventListener('mouseover', function(e) {
 		if (e.target.classList.contains('star')) {
 			const star = e.target;
 			const container = star.closest('.rating-stars');
 			const rating = parseInt(star.getAttribute('data-rating'));
 
-			// Prikaži hover efekat samo ako korisnik nije već ocenio
 			if (!container.classList.contains('user-rated')) {
 				highlightStars(container, rating, true);
 			}
@@ -686,7 +622,6 @@ function initializeSongRatings() {
 	document.addEventListener('mouseout', function(e) {
 		if (e.target.classList.contains('star')) {
 			const container = e.target.closest('.rating-stars');
-			// Vrati na originalno stanje nakon hover-a
 			if (!container.classList.contains('user-rated')) {
 				const userRating = parseInt(container.getAttribute('data-user-rating') || '0');
 				highlightStars(container, userRating, false);
@@ -695,11 +630,9 @@ function initializeSongRatings() {
 	});
 }
 
-// Učitaj user-ovu ocenu za pesmu
 async function loadUserRating(songId, container) {
 	const isLoggedIn = document.body.getAttribute('data-logged-in') === 'true';
 	if (!isLoggedIn) {
-		// Ako korisnik nije ulogovan, samo resetuj zvezdice
 		highlightUserRating(container, 0);
 		return;
 	}
@@ -717,7 +650,6 @@ async function loadUserRating(songId, container) {
 	}
 }
 
-// Učitaj statistiku ocena za pesmu
 async function loadRatingStats(songId, container) {
 	try {
 		const response = await fetch('/api/ratings/song/' + songId + '/stats');
@@ -730,7 +662,6 @@ async function loadRatingStats(songId, container) {
 	}
 }
 
-// Oceni pesmu
 async function rateSong(songId, rating, container) {
 	try {
 		const response = await fetch('/api/ratings/song/' + songId + '?rating=' + rating, {
@@ -740,7 +671,6 @@ async function rateSong(songId, rating, container) {
 
 		if (response.ok) {
 			const data = await response.json();
-			// Oznaci da je korisnik ocenio i prikazi njegovu ocenu
 			highlightUserRating(container, rating);
 			updateRatingStats(container, data.averageRating, data.ratingCount);
 			showRatingSuccessMessage(rating);
@@ -772,14 +702,12 @@ function highlightStars(container, rating, isHover = false) {
 	});
 }
 
-// Označi user-ovu ocenu
 function highlightUserRating(container, userRating) {
 	console.log('Highlighting user rating:', userRating, 'for container:', container);
 
 	const stars = container.querySelectorAll('.star');
 
 	if (userRating > 0) {
-		// Korisnik je ocenio pesmu - označi zvezdice
 		container.classList.add('user-rated');
 		container.setAttribute('data-user-rating', userRating);
 
@@ -793,7 +721,6 @@ function highlightUserRating(container, userRating) {
 			star.classList.remove('hover');
 		});
 	} else {
-		// Korisnik nije ocenio pesmu - resetuj zvezdice
 		container.classList.remove('user-rated');
 		container.removeAttribute('data-user-rating');
 
@@ -804,7 +731,6 @@ function highlightUserRating(container, userRating) {
 	}
 }
 
-// Ažuriraj statistiku ocena
 function updateRatingStats(container, averageRating, ratingCount) {
 	const ratingInfo = container.nextElementSibling;
 	const averageElement = ratingInfo.querySelector('.average-rating');
@@ -820,7 +746,6 @@ function updateRatingStats(container, averageRating, ratingCount) {
 		countElement.textContent = '(0 ratings)';
 	}
 
-	// Prikaži user rating badge ako je korisnik ocenio
 	const userRating = parseInt(container.getAttribute('data-user-rating') || '0');
 	if (userRating > 0) {
 		userRatingValue.textContent = userRating;
@@ -830,12 +755,9 @@ function updateRatingStats(container, averageRating, ratingCount) {
 	}
 }
 
-// Prikaži poruke
 function showRatingSuccessMessage(rating) {
 	const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
 	console.log(`✅ Rating ${rating}/5 saved successfully! ${stars}`);
-	// Možete dodati toast notifikaciju:
-	// showToast(`Rated ${rating} stars!`, 'success');
 }
 
 function showRatingErrorMessage(message) {

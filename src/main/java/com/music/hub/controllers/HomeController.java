@@ -28,21 +28,17 @@ public class HomeController {
         
         model.addAttribute("title", "MusicHub - Share, Discover, Download Music");
         model.addAttribute("songs", songs);
-        
-        // Postavi podrazumevane vrednosti za nelogovane korisnike
         model.addAttribute("isLoggedIn", false);
         model.addAttribute("loggedUserRole", "NOT_REGISTERED");
         model.addAttribute("loggedDisplayRole", "Not Registered");
         model.addAttribute("displayName", "Guest User");
         
-        // Dodaj informacije o ulogovanom korisniku
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-            String userRole = "USER"; // podrazumevana role za registrovane
-            String displayRole = "Registered"; // SADA "Registered" umesto "Music Lover"
-            String displayName = username; // podrazumevano prikazuj username
+            String userRole = "USER";
+            String displayRole = "Registered";
+            String displayName = username;
             
-            // Proveri role iz Spring Security authorities
             for (GrantedAuthority authority : authentication.getAuthorities()) {
                 if (authority.getAuthority().equals("ROLE_ADMIN")) {
                     userRole = "ADMIN";
@@ -56,7 +52,6 @@ public class HomeController {
                 }
             }
             
-            // Ako nije admin, pokušaj da dobiješ puno ime iz baze
             if (!userRole.equals("ADMIN")) {
                 User user = userRepository.findByUsername(username).orElse(null);
                 if (user != null) {

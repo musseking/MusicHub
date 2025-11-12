@@ -23,15 +23,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     boolean existsByEmail(String email);
     
-    // Dohvati sve korisnike sortirane po tipu
     @Query("SELECT u FROM User u ORDER BY u.isAdmin DESC, u.isArtist DESC, u.username ASC")
     List<User> findAllUsersOrdered();
     
-    // Dohvati sve artiste
     @Query("SELECT u FROM User u WHERE u.isArtist = true ORDER BY u.username ASC")
     List<User> findAllArtists();
     
-    // Dohvati sve obične korisnike
     @Query("SELECT u FROM User u WHERE u.isArtist = false AND u.isAdmin = false ORDER BY u.username ASC")
     List<User> findAllRegularUsers();
 }

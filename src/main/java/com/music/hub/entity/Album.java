@@ -30,7 +30,7 @@ public class Album {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // VEZE
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
     private User artist;
@@ -38,7 +38,7 @@ public class Album {
     @OneToMany(mappedBy = "album", fetch = FetchType.LAZY)
     private List<Song> songs = new ArrayList<>();
 
-    // GETTER METODE
+    
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
@@ -49,7 +49,7 @@ public class Album {
     public User getArtist() { return artist; }
     public List<Song> getSongs() { return songs; }
 
-    // SETTER METODE
+    
     public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }

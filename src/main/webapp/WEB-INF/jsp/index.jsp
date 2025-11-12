@@ -11,7 +11,7 @@
 </head>
 <body data-logged-in="${isLoggedIn}">
 	<header>
-		<h1>🎧 MusicHub</h1>
+		<h1>MusicHub</h1>
 		<div class="user-display">
 			<div class="search-container">
 				<input type="text" class="search-input"
@@ -26,7 +26,6 @@
 							${loggedDisplayRole}</div>
 					</div>
 
-					<!-- REPORTS DROPDOWN -->
 					<div class="reports-dropdown">
 						<a href="/reports/song-ratings" class="report-link">🏆</a>
 
@@ -129,7 +128,6 @@
 								sec</span>
 						</div>
 
-						<!-- Rating Section -->
 						<div class="rating-section">
 							<div class="rating-stars" data-song-id="${song.id}">
 								<span class="star" data-rating="1" title="1 star - Poor">★</span>

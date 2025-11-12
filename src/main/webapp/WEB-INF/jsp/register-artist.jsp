@@ -10,7 +10,7 @@
 	<div class="register-container">
 		<div class="register-header">
 			<h1>
-				🎧 MusicHub <span class="admin-badge">ADMIN</span>
+				MusicHub <span class="admin-badge">ADMIN</span>
 			</h1>
 			<p>Register New Artist Account</p>
 		</div>

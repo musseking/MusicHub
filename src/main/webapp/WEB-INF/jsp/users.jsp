@@ -10,7 +10,7 @@
 <body>
 	<header>
 		<h1>
-			🎧 MusicHub
+			MusicHub
 			<c:if test="${isAdmin}">
 				<span
 					style="background: #ff4757; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; margin-left: 0.5rem;">ADMIN

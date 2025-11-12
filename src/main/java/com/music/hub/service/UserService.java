@@ -24,7 +24,6 @@ public class UserService {
     public User registerUser(String username, String email, String password, 
                            String firstName, String lastName, Boolean isArtist) {
         
-        // Proveri da li korisnik već postoji
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username already exists: " + username);
         }
@@ -33,7 +32,6 @@ public class UserService {
             throw new RuntimeException("Email already exists: " + email);
         }
 
-        // Kreiraj novog korisnika
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
@@ -42,8 +40,7 @@ public class UserService {
         user.setLastName(lastName);
         user.setIsArtist(Boolean.TRUE.equals(isArtist));
         user.setIsActive(true);
-        user.setIsAdmin(false); // Samo admin može da postavi admin privilegije
-        // createdAt i updatedAt će se automatski postaviti preko @PrePersist
+        user.setIsAdmin(false);
 
         return userRepository.save(user);
     }
@@ -52,10 +49,8 @@ public class UserService {
     public User registerArtistByAdmin(String username, String email, String password,
                                     String firstName, String lastName, String bio) {
         
-        // Koristi postojeću registerUser metodu sa isArtist = true
         User user = registerUser(username, email, password, firstName, lastName, true);
         
-        // Postavi bio za artist-a ako je prosleđen
         if (bio != null && !bio.trim().isEmpty()) {
             user.setBio(bio);
             userRepository.save(user);
@@ -76,27 +71,22 @@ public class UserService {
         return false;
     }
 
-    // Dohvati sve korisnike
     public List<User> getAllUsers() {
         return userRepository.findAllUsersOrdered();
     }
     
-    // Dohvati sve artiste
     public List<User> getAllArtists() {
         return userRepository.findAllArtists();
     }
     
-    // Dohvati sve obične korisnike
     public List<User> getAllRegularUsers() {
         return userRepository.findAllRegularUsers();
     }
     
-    // Dohvati korisnika po ID
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
     
-    // Deaktiviraj korisnika
     @Transactional
     public boolean deactivateUser(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
@@ -109,7 +99,6 @@ public class UserService {
         return false;
     }
     
-    // Aktiviraj korisnika
     @Transactional
     public boolean activateUser(Long id) {
         Optional<User> userOpt = userRepository.findById(id);

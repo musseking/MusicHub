@@ -20,11 +20,11 @@ public class Genre {
     @Column(name = "created_by")
     private Long createdBy;
 
-    // VEZE
+    
     @OneToMany(mappedBy = "genre", fetch = FetchType.LAZY)
     private List<Song> songs = new ArrayList<>();
 
-    // GETTER I SETTER METODE
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -9,7 +9,7 @@
 <body>
 	<div class="register-container">
 		<div class="register-header">
-			<h1>🎧 MusicHub</h1>
+			<h1>MusicHub</h1>
 			<p>Join Our Music Community</p>
 		</div>
 
@@ -58,7 +58,6 @@
 
 		<a href="<c:url value='/'/>" class="back-link">← Back to MusicHub</a>
 
-		<!-- NOVO: Login prompt sa posebnim hover-om -->
 		<div class="login-prompt">
 			<span class="login-text">Already have an account? </span> <a
 				href="<c:url value='/login'/>" class="login-link">Login here</a>

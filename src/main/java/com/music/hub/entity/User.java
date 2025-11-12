@@ -48,7 +48,7 @@ public class User {
     @Column(name = "is_admin")
     private Boolean isAdmin = false;
 
-    // VEZE
+    
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
     private List<Song> songs = new ArrayList<>();
 
@@ -66,7 +66,7 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
-    // GETTER METODE
+
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getEmail() { return email; }
@@ -83,7 +83,7 @@ public class User {
     public List<Album> getAlbums() { return albums; }
     public Boolean getIsAdmin() { return isAdmin; }
     
-    // SETTER METODE
+
     public void setId(Long id) { this.id = id; }
     public void setUsername(String username) { this.username = username; }
     public void setEmail(String email) { this.email = email; }

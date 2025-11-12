@@ -19,10 +19,10 @@ public class Song {
     @Column(name = "file_path", nullable = false)
     private String filePath;
 
-    private Integer duration; // u sekundama
+    private Integer duration;
 
     @Column(name = "file_size")
-    private Long fileSize; // u bajtovima
+    private Long fileSize;
 
     @Column(name = "cover_image")
     private String coverImage;
@@ -51,7 +51,7 @@ public class Song {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // JPA VEZE
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
     private User artist;
@@ -64,7 +64,7 @@ public class Song {
     @JoinColumn(name = "album_id")
     private Album album;
 
-    // GETTER METODE
+    
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
@@ -84,7 +84,7 @@ public class Song {
     public Genre getGenre() { return genre; }
     public Album getAlbum() { return album; }
 
-    // SETTER METODE
+    
     public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }

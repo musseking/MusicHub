@@ -17,10 +17,8 @@ public class RegisterController {
         this.userService = userService;
     }
 
-    // Prikaz forme za registrovanje običnih korisnika
     @GetMapping("/register")
     public String showRegisterForm(Model model, Authentication authentication) {
-        // Ako je korisnik već ulogovan, preusmeri ga na početnu stranicu
         if (authentication != null && authentication.isAuthenticated()) {
             return "redirect:/";
         }
@@ -29,7 +27,6 @@ public class RegisterController {
         return "register";
     }
 
-    // Obrada registrovanja običnih korisnika
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,
                              @RequestParam String email,
@@ -51,7 +48,6 @@ public class RegisterController {
         }
     }
 
-    // Pomocna metoda za proveru admin role
     private boolean isAdmin(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;

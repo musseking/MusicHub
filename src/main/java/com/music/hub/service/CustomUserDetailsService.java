@@ -26,7 +26,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("=== LOADING USER: " + username + " ===");
         
-        // Prvo proveri sa običnim findByUsername
         Optional<User> userOpt = userRepository.findByUsername(username);
         System.out.println("=== USER EXISTS (basic): " + userOpt.isPresent() + " ===");
         
@@ -40,7 +39,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             System.out.println("=== IsArtist: " + user.getIsArtist() + " ===");
         }
         
-        // Sada koristi findActiveUserByUsername
         User user = userRepository.findActiveUserByUsername(username)
                 .orElseThrow(() -> {
                     System.out.println("=== USER NOT FOUND OR INACTIVE VIA ACTIVE QUERY ===");
@@ -59,15 +57,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     private List<GrantedAuthority> getAuthorities(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         
-        // SVI korisnici dobijaju ROLE_USER
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         
-        // Ako je admin, dodaj ROLE_ADMIN
         if (Boolean.TRUE.equals(user.getIsAdmin())) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
-        
-        // Ako je artist, dodaj ROLE_ARTIST  
+         
         if (Boolean.TRUE.equals(user.getIsArtist())) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ARTIST"));
         }
