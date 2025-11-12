@@ -55,54 +55,7 @@ public class SongController {
         }
         
         return "song-details";
-    }
-
-    @GetMapping("/preview/{id}")
-    @ResponseBody
-    public ResponseEntity<Resource> songPreview(@PathVariable Long id) {
-        System.out.println("🎵 PREVIEW ENDPOINT CALLED FOR SONG ID: " + id);
-        
-        try {
-            List<Song> allSongs = songService.getAllSongs();
-            Song song = null;
-            
-            for (Song s : allSongs) {
-                if (s.getId().equals(id)) {
-                    song = s;
-                    break;
-                }
-            }
-            
-            if (song == null) {
-                System.out.println("❌ PREVIEW ERROR: SONG NOT FOUND");
-                return ResponseEntity.notFound().build();
-            }
-            
-            System.out.println("✅ PREVIEW SONG: " + song.getTitle());
-            
-            File audioFile = findAudioFile(song.getFilePath());
-            
-            if (audioFile == null || !audioFile.exists()) {
-                System.out.println("❌ PREVIEW ERROR: FILE NOT FOUND");
-                return ResponseEntity.notFound().build();
-            }
-
-            System.out.println("✅ PREVIEW FILE FOUND: " + audioFile.getAbsolutePath());
-            
-            Resource resource = new FileSystemResource(audioFile);
-            
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, "audio/wav")
-                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(audioFile.length()))
-                    .header("X-Preview-Limit", "60")
-                    .body(resource);
-                    
-        } catch (Exception e) {
-            System.out.println("❌ PREVIEW ERROR: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-    }
+    }	
 
     @GetMapping("/download/{id}")
     @ResponseBody

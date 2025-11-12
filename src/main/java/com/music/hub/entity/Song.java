@@ -1,6 +1,9 @@
 package com.music.hub.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,15 +13,20 @@ public class Song {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(max = 255)
     @Column(nullable = false)
     private String title;
 
+    @Size(max = 500)
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @NotBlank
     @Column(name = "file_path", nullable = false)
     private String filePath;
 
+    @NotNull
     private Integer duration;
 
     @Column(name = "file_size")
@@ -51,11 +59,12 @@ public class Song {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
     private User artist;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genre_id")
     private Genre genre;
@@ -64,7 +73,6 @@ public class Song {
     @JoinColumn(name = "album_id")
     private Album album;
 
-    
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
@@ -84,7 +92,6 @@ public class Song {
     public Genre getGenre() { return genre; }
     public Album getAlbum() { return album; }
 
-    
     public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }

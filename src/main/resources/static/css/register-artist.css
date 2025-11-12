@@ -129,3 +129,15 @@ button:hover {
 	display: inline-block;
 	margin-left: 0.5rem;
 }
+
+.error {
+    color: #ff4757;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    display: block;
+}
+
+input.error, textarea.error, select.error {
+    border-color: #ff4757 !important;
+    background-color: rgba(255, 71, 87, 0.1) !important;
+}

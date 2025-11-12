@@ -704,3 +704,44 @@ header h1 {
 .report-link.admin:hover {
     background: rgba(255, 71, 87, 0.3);
 }
+
+.error {
+    color: #ff4757;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    display: block;
+}
+
+input.error, textarea.error, select.error {
+    border-color: #ff4757 !important;
+    background-color: rgba(255, 71, 87, 0.1) !important;
+}
+
+.form-group {
+    position: relative;
+}
+
+.field-error {
+    border: 2px solid #ff4757 !important;
+    background-color: rgba(255, 71, 87, 0.05) !important;
+}
+
+.success-message {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.error-message {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: 1px solid rgba(255, 107, 107, 0.5);
+}

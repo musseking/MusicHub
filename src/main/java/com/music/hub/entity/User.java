@@ -1,6 +1,9 @@
 package com.music.hub.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,18 +15,27 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(min = 3, max = 20)
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Email
+    @NotBlank
     @Column(unique = true, nullable = false)
     private String email;
 
+    @NotBlank
     @Column(nullable = false)
     private String password;
 
+    @NotBlank
+    @Size(min = 2, max = 50)
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
+    @NotBlank
+    @Size(min = 2, max = 50)
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
@@ -36,6 +48,7 @@ public class User {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @Size(max = 500)
     @Column(columnDefinition = "TEXT")
     private String bio;
 
@@ -48,7 +61,6 @@ public class User {
     @Column(name = "is_admin")
     private Boolean isAdmin = false;
 
-    
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY)
     private List<Song> songs = new ArrayList<>();
 
@@ -65,7 +77,6 @@ public class User {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 
     public Long getId() { return id; }
     public String getUsername() { return username; }

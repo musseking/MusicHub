@@ -20,28 +20,26 @@
 					<c:remove var="LOGIN_ERROR_MESSAGE" scope="session" />
 				</c:when>
 				<c:otherwise>
-					<div class="error-message">🔐 Invalid username or password</div>
+					<div class="error-message">Invalid username or password</div>
 				</c:otherwise>
 			</c:choose>
 		</c:if>
 
 		<form action="<c:url value='/login'/>" method="post">
 			<div class="form-group">
-				<label for="username">🎤 Username</label> <input type="text"
-					id="username" name="username" placeholder="Enter your username"
-					required autofocus>
+				<label for="username">Username</label>
+				<input type="text" id="username" name="username" placeholder="Enter your username" required>
 			</div>
 
 			<div class="form-group">
-				<label for="password">🔒 Password</label> <input type="password"
-					id="password" name="password" placeholder="Enter your password"
-					required>
+				<label for="password">Password</label>
+				<input type="password" id="password" name="password" placeholder="Enter your password" required>
 			</div>
 
-			<button type="submit">🎵 Sign In</button>
+			<button type="submit">Sign In</button>
 		</form>
 
-		<a href="<c:url value='/'/>" class="back-link">← Back to Music</a>
+		<a href="<c:url value='/'/>" class="back-link">Back to Music</a>
 	</div>
 </body>
 </html>

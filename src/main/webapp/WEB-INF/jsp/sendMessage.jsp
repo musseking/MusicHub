@@ -4,7 +4,6 @@
 <head>
 <title>${title}</title>
 <link rel="stylesheet" href="./css/sendMessage.css">
-
 </head>
 <body>
 	<header>
@@ -45,19 +44,19 @@
 		</div>
 
 		<form action="/send-message" method="post">
-			<input type="hidden" name="artistId" value="${artistId}"> <input
-				type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="artistId" value="${artistId}">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 
 			<div class="form-group">
-				<label for="subject">Subject</label> <input type="text" id="subject"
-					name="subject" value="${subject}"
-					placeholder="Enter message subject" required>
+				<label for="subject">Subject</label>
+				<input type="text" id="subject" name="subject" value="${subject}"
+					placeholder="Enter message subject" required maxlength="200">
 			</div>
 
 			<div class="form-group">
 				<label for="content">Message</label>
 				<textarea id="content" name="content"
-					placeholder="Write your message here..." required>${content}</textarea>
+					placeholder="Write your message here..." required maxlength="2000">${content}</textarea>
 			</div>
 
 			<div class="btn-group">

@@ -1,13 +1,18 @@
 package com.music.hub.controllers;
 
-import com.music.hub.service.UserService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.music.hub.dto.UserRegistrationDTO;
+import com.music.hub.service.UserService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class RegisterController {
@@ -24,26 +29,34 @@ public class RegisterController {
         }
         
         model.addAttribute("title", "Register - MusicHub");
+        model.addAttribute("userDTO", new UserRegistrationDTO());
         return "register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestParam String username,
-                             @RequestParam String email,
-                             @RequestParam String password,
-                             @RequestParam String firstName,
-                             @RequestParam String lastName,
+    public String registerUser(@Valid @ModelAttribute("userDTO") UserRegistrationDTO userDTO,
+                             BindingResult result,
                              Model model) {
+        
+        if (result.hasErrors()) {
+            model.addAttribute("title", "Register - MusicHub");
+            return "register";
+        }
+
         try {
-            userService.registerUser(username, email, password, firstName, lastName, false);
+            userService.registerUser(
+                userDTO.getUsername(),
+                userDTO.getEmail(),
+                userDTO.getPassword(),
+                userDTO.getFirstName(),
+                userDTO.getLastName(),
+                false
+            );
             model.addAttribute("success", "Registration successful! Please login.");
             return "redirect:/login?success=true";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("username", username);
-            model.addAttribute("email", email);
-            model.addAttribute("firstName", firstName);
-            model.addAttribute("lastName", lastName);
+            model.addAttribute("userDTO", userDTO);
             return "register";
         }
     }
